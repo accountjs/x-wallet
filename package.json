@@ -10,10 +10,19 @@
     "test": "plasmo test"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.0.2",
+    "@zerodev/sdk": "^4.2.1",
+    "@zerodev/web3auth": "^4.2.6",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "lucide-react": "^0.292.0",
     "plasmo": "0.83.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-router-dom": "^6.18.0"
+    "react-router-dom": "^6.18.0",
+    "tailwind-merge": "^2.0.0",
+    "tailwindcss-animate": "^1.0.7",
+    "viem": "^1.18.4"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "4.1.0",
@@ -21,12 +30,18 @@
     "@types/node": "20.5.9",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
     "prettier": "3.0.3",
+    "tailwindcss": "^3.3.5",
     "typescript": "5.2.2"
   },
   "manifest": {
     "host_permissions": [
       "https://*/*"
+    ],
+    "permissions": [
+      "tabs"
     ]
   }
 }
