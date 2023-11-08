@@ -1,13 +1,16 @@
 // import { useCallback, useContext, useMemo, useState } from "react";
 // import { ECDSAProvider, getRPCProviderOwner } from "@zerodev/sdk";
 // import { NFT_Contract_Abi } from "../config/contractAbi";
-// import { encodeFunctionData, parseEther, parseAbi } from "viem";
-// import { ZeroDevWeb3Auth, ZeroDevWeb3AuthWithModal } from "@zerodev/web3auth";
+import { useMemo, useState } from "react";
+import { encodeFunctionData, parseEther, parseAbi, zeroAddress } from "viem";
+import { ECDSAProvider, getRPCProviderOwner } from "@zerodev/sdk";
+import { ZeroDevWeb3Auth } from "@zerodev/web3auth";
 
 // const contractAbi = NFT_Contract_Abi;
 // const nftAddress = "0x34bE7f35132E97915633BC1fc020364EA5134863";
-// const defaultProjectId = "fc514f35-ed25-4100-97e6-90dd298a5d64";
+const defaultProjectId = "c1148dbd-a7a2-44b1-be79-62a54c552287";
 
+const zeroDevWeb3AuthNoModal = new ZeroDevWeb3Auth([defaultProjectId]);
 // export const useWallet = () => {
 //   let ecdsaProvider;
 
@@ -283,3 +286,71 @@
 //     ecdsaProvider,
 //   };
 // };
+
+export const useWallet = () => {
+  const [address, setAddress] = useState<`0x${string}` | undefined>();
+  const [isLogin, setIsLogin] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
+
+  const setWallet = async (provider: any) => {
+    const ecdsaProvider = await ECDSAProvider.init({
+      projectId: defaultProjectId,
+      owner: getRPCProviderOwner(provider),
+    });
+    setAddress(await ecdsaProvider.getAddress());
+    setIsLogin(true);
+  };
+
+  const zeroDevWeb3Auth = useMemo(() => {
+    const instance = new ZeroDevWeb3Auth([defaultProjectId]);
+    instance.initialize(
+      {
+        onConnect: async () => {
+          setLoginLoading(true);
+          setWallet(zeroDevWeb3Auth.provider);
+          setLoginLoading(false);
+        },
+      },
+      "twitter"
+    );
+    return instance;
+  }, []);
+
+  const disconnect = async () => {
+    await zeroDevWeb3Auth.logout();
+    setAddress(undefined);
+    setIsLogin(false);
+  };
+
+  async function getAddress(): Promise<`0x${string}`> {
+    return new Promise((resolve) => {
+      resolve(address);
+    });
+  }
+
+  async function login() {
+    setLoginLoading(true);
+    zeroDevWeb3Auth
+      .login("twitter")
+      .then((provider) => {
+        console.log(provider);
+        setWallet(provider);
+      })
+      .catch(console.log)
+      .finally(() => {
+        setLoginLoading(false);
+      });
+  }
+
+  async function sendETH(): Promise<string> {
+    return;
+  }
+
+  return {
+    address,
+    login,
+    isLogin,
+    loginLoading,
+    sendETH,
+  };
+};

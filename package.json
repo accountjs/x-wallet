@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-tabs": "^1.0.4",
     "@zerodev/sdk": "^4.2.1",
     "@zerodev/web3auth": "^4.2.6",
     "class-variance-authority": "^0.7.0",
