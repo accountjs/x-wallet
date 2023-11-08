@@ -5,14 +5,13 @@ import { useWallet } from "~popup/hooks/useWallet";
 import { urlFormat } from "~popup/utils";
 
 export default function Login() {
-  const { login, address, loginLoading } = useWallet();
+  const { isLogin, login, loginLoading } = useWallet();
   const navigate = useNavigate();
   useEffect(() => {
-    if (address) {
-      console.log("address", address);
+    if (isLogin) {
       navigate("/");
     }
-  }, [address]);
+  }, [isLogin]);
   return (
     <>
       <div className="w-full h-full bg-[#F8FAF9] px-11 pt-24 rounded-[1.25rem]">
@@ -29,7 +28,6 @@ export default function Login() {
           >
             {loginLoading ? "loading ..." : "connect to X-Wallet"}
           </Button>
-          {address ? address : "Null"}
         </div>
       </div>
     </>

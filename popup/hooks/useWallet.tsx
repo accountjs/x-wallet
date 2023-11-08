@@ -1,7 +1,7 @@
 // import { useCallback, useContext, useMemo, useState } from "react";
 // import { ECDSAProvider, getRPCProviderOwner } from "@zerodev/sdk";
 // import { NFT_Contract_Abi } from "../config/contractAbi";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { encodeFunctionData, parseEther, parseAbi, zeroAddress } from "viem";
 import { ECDSAProvider, getRPCProviderOwner } from "@zerodev/sdk";
 import { ZeroDevWeb3Auth } from "@zerodev/web3auth";
@@ -286,19 +286,90 @@ const zeroDevWeb3AuthNoModal = new ZeroDevWeb3Auth([defaultProjectId]);
 //     ecdsaProvider,
 //   };
 // };
+export interface UserInfo {
+  username: string;
+  twitterHandle: string;
+  handleName: string;
+  ownerAddress: string;
+  walletAddress: string;
+}
 
 export const useWallet = () => {
-  const [address, setAddress] = useState<`0x${string}` | undefined>();
   const [isLogin, setIsLogin] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
+  const [ecdsaProvider, setEcdsaProvider] = useState<ECDSAProvider | null>(
+    null
+  );
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+
+  useEffect(() => {
+    if (isLogin) {
+      zeroDevWeb3Auth.getUserInfo().then(async (handle) => {
+        console.log(handle);
+        let twitter_info = await getAddressById(
+          handle.verifierId.match(/(\d+)/)[0]
+        );
+        let user_info: UserInfo = {
+          username: handle.name,
+          twitterHandle: handle.verifierId.match(/(\d+)/)[0],
+          handleName: twitter_info?.user_info?.username,
+          ownerAddress: await ecdsaProvider.getAddress(),
+          walletAddress: twitter_info?.account_address,
+        };
+        setUserInfo(user_info);
+      });
+    }
+  }, [isLogin]);
 
   const setWallet = async (provider: any) => {
     const ecdsaProvider = await ECDSAProvider.init({
       projectId: defaultProjectId,
       owner: getRPCProviderOwner(provider),
     });
-    setAddress(await ecdsaProvider.getAddress());
+    let walletAddress = await ecdsaProvider.getAddress();
+    setUserInfo((prev) => {
+      return {
+        ...prev,
+        walletAddress,
+      };
+    });
     setIsLogin(true);
+    setEcdsaProvider(ecdsaProvider);
+  };
+
+  const getaddress = async (handle: string) => {
+    const requestBody = JSON.stringify({
+      handle,
+    });
+    const response = await fetch(
+      "https://x-wallet-backend.vercel.app/api/getAddress",
+      {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: requestBody,
+      }
+    );
+    return await response.json();
+  };
+  const getAddressById = async (id: string) => {
+    const requestBody = JSON.stringify({
+      id,
+    });
+    const response = await fetch(
+      "https://x-wallet-backend.vercel.app/api/getAddressById",
+      {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: requestBody,
+      }
+    );
+    return await response.json();
   };
 
   const zeroDevWeb3Auth = useMemo(() => {
@@ -322,19 +393,13 @@ export const useWallet = () => {
     setIsLogin(false);
   };
 
-  async function getAddress(): Promise<`0x${string}`> {
-    return new Promise((resolve) => {
-      resolve(address);
-    });
-  }
-
   async function login() {
     setLoginLoading(true);
     zeroDevWeb3Auth
       .login("twitter")
-      .then((provider) => {
-        console.log(provider);
+      .then(async (provider) => {
         setWallet(provider);
+        // setAddress(await getaddress(handle));
       })
       .catch(console.log)
       .finally(() => {
@@ -347,10 +412,10 @@ export const useWallet = () => {
   }
 
   return {
-    address,
     login,
     isLogin,
     loginLoading,
+    userInfo,
     sendETH,
   };
 };

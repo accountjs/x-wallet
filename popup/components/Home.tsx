@@ -1,18 +1,15 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~components/ui/tabs";
+import { Content } from "./Content";
+import { Footer } from "./Footer";
+import { Header } from "./Header";
 
-export function Home() {
+export default function Home() {
   return (
     <>
-      <Tabs defaultValue="account" className="w-[400px]">
-        <TabsList>
-          <TabsTrigger value="account">Account</TabsTrigger>
-          <TabsTrigger value="password">Password</TabsTrigger>
-        </TabsList>
-        <TabsContent value="account">
-          Make changes to your account here.
-        </TabsContent>
-        <TabsContent value="password">Change your password here.</TabsContent>
-      </Tabs>
+      <div className="flex flex-col">
+        <Header />
+        <Content />
+        <Footer />
+      </div>
     </>
   );
 }

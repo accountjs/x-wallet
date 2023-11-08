@@ -1,6 +1,7 @@
 import { Route, Routes, Navigate } from "react-router-dom";
-import { Home } from "./components/Home";
 import Login from "./components/Login";
+import Home from "./components/Home";
+
 import { useWallet } from "./hooks/useWallet";
 export default function App() {
   const { isLogin } = useWallet();
