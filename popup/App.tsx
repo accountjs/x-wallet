@@ -1,10 +1,10 @@
 import { Route, Routes, Navigate } from "react-router-dom";
 import Login from "./components/Login";
 import Home from "./components/Home";
-
-import { useWallet } from "./hooks/useWallet";
+import { useContext } from "react";
+import { XWalletProviderContext } from "./context";
 export default function App() {
-  const { isLogin } = useWallet();
+  const { isLogin } = useContext(XWalletProviderContext);
   const PrivateRoute = ({ children }) => {
     return isLogin ? <>{children}</> : <Navigate to="/login" replace />;
   };

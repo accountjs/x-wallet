@@ -1,3 +1,3 @@
-import { XWalletProvider } from "./Web3Provider";
+import { XWalletProvider, XWalletProviderContext } from "./XWalletProvider";
 
-export { XWalletProvider };
+export { XWalletProvider, XWalletProviderContext };

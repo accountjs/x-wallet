@@ -2,14 +2,16 @@ import { Button } from "~components/ui/button";
 import { useWallet } from "../../hooks/useWallet";
 import { TwitterName } from "./TwitterName";
 import { urlFormat } from "~popup/utils";
+import { useContext } from "react";
+import { XWalletProviderContext } from "~popup/context";
 
 export function Header() {
-  const { userInfo } = useWallet();
+  const { userInfo } = useContext(XWalletProviderContext);
   return (
     <>
       <div>
         <div className=" flex justify-between items-center">
-          <TwitterName handle={userInfo?.handleName || ""} />
+          <TwitterName handle={userInfo?.handleName ?? ""} />
           <div className="flex items-center">
             <Button> Send </Button>
             <img

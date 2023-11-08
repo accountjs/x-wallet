@@ -1,16 +1,18 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "~components/ui/button";
+import { XWalletProviderContext } from "~popup/context";
 import { useWallet } from "~popup/hooks/useWallet";
 import { urlFormat } from "~popup/utils";
 
 export default function Login() {
-  const { isLogin, login, loginLoading } = useWallet();
+  const { isLogin, login, loginLoading } = useContext(XWalletProviderContext);
   const navigate = useNavigate();
   useEffect(() => {
     if (isLogin) {
       navigate("/");
     }
+    console.log("islogin", isLogin);
   }, [isLogin]);
   return (
     <>
