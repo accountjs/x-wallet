@@ -5,8 +5,7 @@ import React, {
   useMemo,
 } from "react";
 import { NFT_Contract_Abi } from "~contractAbi.js";
-import { encodeFunctionData, parseEther, parseAbi, createPublicClient, http } from "viem";
-import { polygonMumbai } from 'viem/chains'
+import { encodeFunctionData, parseEther, parseAbi} from "viem";
 
 import { ECDSAProvider, getRPCProviderOwner } from "@zerodev/sdk";
 import { ZeroDevWeb3Auth } from "@zerodev/web3auth";
@@ -44,18 +43,10 @@ export function XWalletProvider({ children }) {
     accountAddress: "",
   });
 
-  const publicClient = createPublicClient({
-    chain: polygonMumbai,
-    transport: http()
-  })
-
   const zeroDevWeb3Auth = useMemo(() => {
     const instance = new ZeroDevWeb3Auth([DEFAULT_PROJECT_ID]);
     instance.initialize(
-      {
-        onConnect: async () => {},
-      },
-      "twitter"
+      {}, "twitter"
     );
     return instance;
   }, []);
@@ -68,21 +59,19 @@ export function XWalletProvider({ children }) {
         zeroDevWeb3Auth.getUserInfo().then(async (twitterHandle) => {
           let twitterId = twitterHandle.verifierId.match(/(\d+)/)[0];
           let twitterInfo = await getAddressById(twitterId);
-          console.log(twitterHandle, twitterInfo);
+          //console.log(twitterHandle, twitterInfo);
           let twitterName = twitterInfo?.user_info?.name ?? "";
           let username = twitterInfo?.user_info?.username ?? "";
           let accountAddress = twitterInfo?.account_address ?? "";
           let ownerAddress = await getRPCProviderOwner(provider).getAddress();
 
-          // check deployed
-          // if (await publicClient.getBytecode(accountAddress) === undefined) {
-            try {
-              const resp = await deployAccount(ownerAddress, twitterId);
-              console.log("deploy", resp);
-            } catch (e) {
-              console.log(e);
-            }
-          // }
+          // check account deployed
+          try {
+            const resp = await deployAccount(ownerAddress, twitterId);
+            console.log("deploy", resp);
+          } catch (e) {
+            console.log(e);
+          }
 
           // set userInfo
           let userInfo: UserInfo = {
@@ -107,11 +96,8 @@ export function XWalletProvider({ children }) {
           });
           setEcdsaProvider(ecdsaProvider);
 
-
           // set login
           setIsLogin(true);
-          // check account owner on chain
-          // console.log("owner?",await ecdsaProvider.getAddress());
         });
       })
       .catch(console.log)
@@ -150,8 +136,7 @@ export function XWalletProvider({ children }) {
   const sendERC20 = useCallback(
     async (tokenAddress, target, value) => {
       // check target
-      let toAddress = await checkTarget(target);
-      
+      let toAddress = await checkTarget(target);  
       const { hash } = await ecdsaProvider.sendUserOperation({
         target: tokenAddress,
         data: encodeFunctionData({
