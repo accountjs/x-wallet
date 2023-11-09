@@ -10,8 +10,7 @@ import { encodeFunctionData, parseEther, parseAbi} from "viem";
 import { ECDSAProvider, getRPCProviderOwner } from "@zerodev/sdk";
 import { ZeroDevWeb3Auth } from "@zerodev/web3auth";
 export const XWalletProviderContext = createContext(undefined);
-// const contractAbi = NFT_Contract_Abi;
-// const nftAddress = "0x34bE7f35132E97915633BC1fc020364EA5134863";
+
 const DEFAULT_PROJECT_ID = "c1148dbd-a7a2-44b1-be79-62a54c552287";
 const NFT_CONTRACT_ABI = NFT_Contract_Abi;
 const NFT_ADDRESS = "0x34bE7f35132E97915633BC1fc020364EA5134863";
@@ -218,7 +217,7 @@ export function XWalletProvider({ children }) {
 
   return (
     <XWalletProviderContext.Provider
-      value={{ userInfo, isLogin, login, loginLoading, mintNft }}
+      value={{ userInfo, isLogin, login, loginLoading, mintNft, sendETH, sendERC20 }}
     >
       {children}
     </XWalletProviderContext.Provider>
