@@ -8,6 +8,7 @@ export default function App() {
   const PrivateRoute = ({ children }) => {
     return isLogin ? <>{children}</> : <Navigate to="/login" replace />;
   };
+  
   return (
     <>
       <div className="h-[375px] w-[350px] font-semibold mb-10">

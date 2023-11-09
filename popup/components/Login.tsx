@@ -2,7 +2,6 @@ import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "~components/ui/button";
 import { XWalletProviderContext } from "~popup/context";
-import { useWallet } from "~popup/hooks/useWallet";
 import { urlFormat } from "~popup/utils";
 
 export default function Login() {
@@ -12,7 +11,7 @@ export default function Login() {
     if (isLogin) {
       navigate("/");
     }
-    console.log("islogin", isLogin);
+    console.log("Login islogin", isLogin);
   }, [isLogin]);
   return (
     <>

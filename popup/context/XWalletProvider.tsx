@@ -1,27 +1,31 @@
 import React, {
   createContext,
-  useEffect,
   useState,
   useCallback,
   useMemo,
 } from "react";
-import { useWallet } from "~popup/hooks/useWallet";
-import { encodeFunctionData, parseEther, parseAbi, zeroAddress } from "viem";
+import { NFT_Contract_Abi } from "~contractAbi.js";
+import { encodeFunctionData, parseEther, parseAbi} from "viem";
+
 import { ECDSAProvider, getRPCProviderOwner } from "@zerodev/sdk";
 import { ZeroDevWeb3Auth } from "@zerodev/web3auth";
 export const XWalletProviderContext = createContext(undefined);
-// const contractAbi = NFT_Contract_Abi;
-// const nftAddress = "0x34bE7f35132E97915633BC1fc020364EA5134863";
-const defaultProjectId = "c1148dbd-a7a2-44b1-be79-62a54c552287";
 
-const zeroDevWeb3AuthNoModal = new ZeroDevWeb3Auth([defaultProjectId]);
+const DEFAULT_PROJECT_ID = "c1148dbd-a7a2-44b1-be79-62a54c552287";
+const NFT_CONTRACT_ABI = NFT_Contract_Abi;
+const NFT_ADDRESS = "0x34bE7f35132E97915633BC1fc020364EA5134863";
+const TRANSFER_FUNC_ABI = parseAbi([
+  'function transfer(address recipient, uint256 amount) public',
+]); // TODO: token ABI
+
+const zeroDevWeb3AuthNoModal = new ZeroDevWeb3Auth([DEFAULT_PROJECT_ID]);
 
 export interface UserInfo {
   username: string;
-  twitterHandle: string;
-  handleName: string;
+  twitterId: string;
+  twitterName: string;
   ownerAddress: string;
-  walletAddress: string;
+  accountAddress: string;
 }
 
 export function XWalletProvider({ children }) {
@@ -32,15 +36,131 @@ export function XWalletProvider({ children }) {
   );
   const [userInfo, setUserInfo] = useState<UserInfo>({
     username: "",
-    twitterHandle: "",
-    handleName: "",
+    twitterId: "",
+    twitterName: "",
     ownerAddress: "",
-    walletAddress: "",
+    accountAddress: "",
   });
 
-  const setWallet = async (provider: any) => {};
+  const zeroDevWeb3Auth = useMemo(() => {
+    const instance = new ZeroDevWeb3Auth([DEFAULT_PROJECT_ID]);
+    instance.initialize(
+      {}, "twitter"
+    );
+    return instance;
+  }, []);
 
-  const getaddress = async (handle: string) => {
+  const login = useCallback(() => {
+    setLoginLoading(true);
+    zeroDevWeb3Auth
+      .login("twitter")
+      .then(async (provider) => {
+        zeroDevWeb3Auth.getUserInfo().then(async (twitterHandle) => {
+          let twitterId = twitterHandle.verifierId.match(/(\d+)/)[0];
+          let twitterInfo = await getAddressById(twitterId);
+          //console.log(twitterHandle, twitterInfo);
+          let twitterName = twitterInfo?.user_info?.name ?? "";
+          let username = twitterInfo?.user_info?.username ?? "";
+          let accountAddress = twitterInfo?.account_address ?? "";
+          let ownerAddress = await getRPCProviderOwner(provider).getAddress();
+
+          // check account deployed
+          try {
+            const resp = await deployAccount(ownerAddress, twitterId);
+            console.log("deploy", resp);
+          } catch (e) {
+            console.log(e);
+          }
+
+          // set userInfo
+          let userInfo: UserInfo = {
+            username,
+            twitterId,
+            twitterName,
+            ownerAddress,
+            accountAddress,
+          };
+          console.log("userInfo", userInfo);
+          setUserInfo(userInfo);
+
+          // set ecdsaProvider
+          const ecdsaProvider = await ECDSAProvider.init({
+            projectId: DEFAULT_PROJECT_ID,
+            owner: getRPCProviderOwner(provider),
+            opts: {
+              accountConfig: {
+                accountAddress,
+              },
+            },
+          });
+          setEcdsaProvider(ecdsaProvider);
+
+          // set login
+          setIsLogin(true);
+        });
+      })
+      .catch(console.log)
+      .finally(() => {
+        setLoginLoading(false);
+      });
+  }, []);
+
+  const mintNft = useCallback(async () => {
+    const accountAddress = await ecdsaProvider.getAddress();
+    const { hash } = await ecdsaProvider.sendUserOperation({
+      target: NFT_ADDRESS,
+      data: encodeFunctionData({
+        abi: NFT_CONTRACT_ABI,
+        functionName: "mint",
+        args: [accountAddress],
+      }),
+    });
+    console.log("Mint to", accountAddress, "hash", hash);
+    return hash;
+  }, [ecdsaProvider]);
+
+  const sendETH = useCallback(
+    async (target, value) => {
+      // check target   
+      let toAddress = await checkTarget(target);
+      const { hash } = await ecdsaProvider.sendUserOperation({
+        target: toAddress,
+        data: '0x',
+        value: parseEther(value),
+      });
+      console.log("Send to", toAddress, "ETH", value, "hash", hash);
+      return hash;
+    }, [ecdsaProvider]);
+
+  const sendERC20 = useCallback(
+    async (tokenAddress, target, value) => {
+      // check target
+      let toAddress = await checkTarget(target);  
+      const { hash } = await ecdsaProvider.sendUserOperation({
+        target: tokenAddress,
+        data: encodeFunctionData({
+          abi: TRANSFER_FUNC_ABI,
+          functionName: 'transfer',
+          args: [toAddress, parseEther(value)],
+        }),
+      });
+      console.log("Send to", toAddress, "Token", tokenAddress, "Value", value, "hash", hash);
+      return hash;
+    },
+    [ecdsaProvider]
+  );
+
+  const checkTarget = async (target: string) => {
+    const isEthereumAddress = /^0x[0-9a-fA-F]{40}$/.test(target);
+      if (isEthereumAddress) {
+        return target;
+      } else {
+        const repo = await getAddress(target);
+        return repo['account_address'];
+      }
+  }
+
+  const getAddress = async (handle: string) => {
     const requestBody = JSON.stringify({
       handle,
     });
@@ -57,6 +177,7 @@ export function XWalletProvider({ children }) {
     );
     return await response.json();
   };
+
   const getAddressById = async (id: string) => {
     const requestBody = JSON.stringify({
       id,
@@ -75,67 +196,28 @@ export function XWalletProvider({ children }) {
     return await response.json();
   };
 
-  const zeroDevWeb3Auth = useMemo(() => {
-    const instance = new ZeroDevWeb3Auth([defaultProjectId]);
-    instance.initialize(
+  const deployAccount = async (newOwner: `0x${string}`, id: string) => {
+    const requestBody = JSON.stringify({
+      newOwner: newOwner,
+      id: id,
+    });
+    const response = await fetch(
+      "https://x-wallet-backend.vercel.app/api/deploy",
       {
-        onConnect: async () => {
-          setLoginLoading(true);
-          setWallet(zeroDevWeb3Auth.provider);
-          setLoginLoading(false);
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
         },
-      },
-      "twitter"
+        body: requestBody,
+      }
     );
-    return instance;
-  }, []);
+    return await response.json();
+  };
 
-  const login = useCallback(() => {
-    setLoginLoading(true);
-    zeroDevWeb3Auth
-      .login("twitter")
-      .then(async (provider) => {
-        zeroDevWeb3Auth.getUserInfo().then(async (handle) => {
-          console.log(handle);
-          let twitterHandle = handle.verifierId.match(/(\d+)/)[0];
-          let twitter_info = await getAddressById(twitterHandle);
-          let accountAddress = twitter_info?.account_address ?? "";
-          let handleName = twitter_info?.user_info?.username ?? "";
-          const ecdsaProvider = await ECDSAProvider.init({
-            projectId: defaultProjectId,
-            owner: getRPCProviderOwner(provider),
-            opts: {
-              accountConfig: {
-                accountAddress: accountAddress,
-              },
-            },
-          });
-
-          let user_info: UserInfo = {
-            username: handle.name,
-            twitterHandle,
-            handleName,
-            ownerAddress: await ecdsaProvider.getAddress(),
-            walletAddress: accountAddress,
-          };
-          console.log(user_info);
-          setUserInfo(user_info);
-          setIsLogin(true);
-          setEcdsaProvider(ecdsaProvider);
-        });
-      })
-      .catch(console.log)
-      .finally(() => {
-        setLoginLoading(false);
-      });
-  }, []);
-
-  async function sendETH(): Promise<string> {
-    return;
-  }
   return (
     <XWalletProviderContext.Provider
-      value={{ userInfo, isLogin, login, loginLoading }}
+      value={{ userInfo, isLogin, login, loginLoading, mintNft, sendETH, sendERC20 }}
     >
       {children}
     </XWalletProviderContext.Provider>
