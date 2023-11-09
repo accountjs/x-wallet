@@ -38,10 +38,10 @@ export function XWalletProvider({ children }) {
   );
   const [userInfo, setUserInfo] = useState<UserInfo>({
     username: "",
-    twitterHandle: "",
-    handleName: "",
+    twitterId: "",
+    twitterName: "",
     ownerAddress: "",
-    walletAddress: "",
+    accountAddress: "",
   });
 
   const publicClient = createPublicClient({
@@ -69,7 +69,8 @@ export function XWalletProvider({ children }) {
           let twitterId = twitterHandle.verifierId.match(/(\d+)/)[0];
           let twitterInfo = await getAddressById(twitterId);
           console.log(twitterHandle, twitterInfo);
-          let twitterName = twitterInfo?.user_info?.username ?? "";
+          let twitterName = twitterInfo?.user_info?.name ?? "";
+          let username = twitterInfo?.user_info?.username ?? "";
           let accountAddress = twitterInfo?.account_address ?? "";
           let ownerAddress = await getRPCProviderOwner(provider).getAddress();
 
@@ -85,7 +86,7 @@ export function XWalletProvider({ children }) {
 
           // set userInfo
           let userInfo: UserInfo = {
-            username: twitterHandle.name,
+            username,
             twitterId,
             twitterName,
             ownerAddress,
@@ -111,7 +112,6 @@ export function XWalletProvider({ children }) {
           setIsLogin(true);
           // check account owner on chain
           // console.log("owner?",await ecdsaProvider.getAddress());
-          
         });
       })
       .catch(console.log)
