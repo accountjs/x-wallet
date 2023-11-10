@@ -3,13 +3,14 @@ import Login from "./components/Login";
 import Home from "./components/Home";
 import { useContext } from "react";
 import { XWalletProviderContext } from "./context";
+import TransactionDetail from "./components/TransactionDetail";
 export default function App() {
   const { isLogin = true } = useContext(XWalletProviderContext);
   const PrivateRoute = ({ children }) => {
     return children;
     return isLogin ? <>{children}</> : <Navigate to="/login" replace />;
   };
-  
+
   return (
     <div className="h-[375px] w-[350px] font-semibold mb-10">
       <Routes>
@@ -32,6 +33,7 @@ export default function App() {
           }
         />
         <Route path="/lazy" element={<>lazy</>} />
+        <Route path="/transactionDetail" element={<TransactionDetail />} />
       </Routes>
     </div>
   );

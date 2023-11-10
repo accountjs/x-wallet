@@ -1,5 +1,6 @@
 import cn from "classnames";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useConfigStore } from "~popup/store";
 
 interface HistoryItem {
@@ -17,6 +18,11 @@ function HistoryBox() {
     { time: "Nov 3, 2023", history: [{ token: "ETH", amount: "11" }] },
   ]);
   const { isShowMoney } = useConfigStore();
+  const navigate = useNavigate();
+
+  const toTransactionDetail = useCallback(() => {
+    navigate("/transactionDetail");
+  }, []);
 
   return (
     <div className="bg-[#E9E9E9] text-center px-5 py-4 h-[170px] relative">
@@ -44,7 +50,8 @@ function HistoryBox() {
                     "text-sm font-semibold cursor-pointer",
                     "flex justify-between items-center",
                     "h-10 w-[100%] px-6 py-2 mb-3 rounded-2xl bg-white"
-                  )}>
+                  )}
+                  onClick={(i) => toTransactionDetail()}>
                   <span>{i.token}</span>
                   <span
                     className={cn({
