@@ -29,7 +29,7 @@ export default function Header() {
           <Button
             className={cn(
               "w-20 h-8 border-[#0F141A] p-0 rounded-2xl mr-3 bg-[#0F141A]",
-              "flex justify-center items-center "
+              "flex justify-center items-center text-white"
             )}>
             Send
           </Button>

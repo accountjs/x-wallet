@@ -1,6 +1,7 @@
 import cn from "classnames";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import qbrady_manga from "data-base64:~popup/assets/svg/qbrady_manga.png";
+import { useNavigate } from "react-router-dom";
 
 interface NFTItem {
   nft: "";
@@ -16,7 +17,11 @@ function NFTsBox() {
     { nft: "" },
     { nft: "" },
   ]);
-  const [isShow, setIsShow] = useState(false);
+  const navigate = useNavigate();
+
+  const toSendNFT = useCallback(() => {
+    navigate("/sendNFT");
+  }, []);
 
   return (
     <div
@@ -39,6 +44,7 @@ function NFTsBox() {
         <div className={cn("flex justify-start pr-5")}>
           {tokensList.map((i) => (
             <div
+              onClick={() => toSendNFT()}
               key={i.nft}
               className={cn(
                 "flex justify-start items-center flex-shrink-0 flex-col cursor-pointer",

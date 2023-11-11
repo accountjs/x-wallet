@@ -4,6 +4,7 @@ import Home from "./components/Home";
 import { useContext } from "react";
 import { XWalletProviderContext } from "./context";
 import TransactionDetail from "./components/TransactionDetail";
+import SendNFT from "./SendNFT";
 export default function App() {
   const { isLogin = true } = useContext(XWalletProviderContext);
   const PrivateRoute = ({ children }) => {
@@ -34,6 +35,7 @@ export default function App() {
         />
         <Route path="/lazy" element={<>lazy</>} />
         <Route path="/transactionDetail" element={<TransactionDetail />} />
+        <Route path="/sendNFT" element={<SendNFT />} />
       </Routes>
     </div>
   );

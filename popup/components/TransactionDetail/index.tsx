@@ -84,7 +84,7 @@ function StatusIcon({ status = "success" }) {
               fill="#B82929"
             />
           </svg>
-          Completed
+          Defeated
         </div>
       );
     case "loading":
