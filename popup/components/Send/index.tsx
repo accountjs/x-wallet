@@ -36,7 +36,13 @@ const Send = () => {
             position: 'relative',
           }}
         >
-          <StyledInput label="Amount" placeholder="" onChange={handleChange} value={value} />
+          <StyledInput
+            label="Amount"
+            placeholder=""
+            onChange={handleChange}
+            value={value}
+            suffix={SelectForm({ value, options, onChange: handleSelectChange })}
+          />
           <div
             className={cn(
               'absolute left-[50%] bottom-[50%] -translate-x-1/2 -translate-y-1/2',
@@ -50,7 +56,6 @@ const Send = () => {
             placeholder="name or handle"
             onChange={handleChange}
             value={value}
-            suffix={SelectForm({ value, options, onChange: handleSelectChange })}
           />
           <StyledDesc label="Target Address:" value={value} />
         </div>

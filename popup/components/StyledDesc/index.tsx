@@ -26,9 +26,8 @@ const StyledDesc = ({ label = 'laebl', value = '', suffix }: PropsType) => {
           lineHeight: '48px',
           padding: '0 10px',
           boxSizing: 'content-box',
-          // textWrap: 'nowrap',
         }}
-        className="test"
+        className="whitespace-nowrap "
       >
         {label}
       </span>
