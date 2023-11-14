@@ -1,4 +1,5 @@
 import type React from 'react';
+import cn from 'classnames';
 
 type PropsType = {
   label?: string;
@@ -15,38 +16,28 @@ const StyledInput = ({ label = 'laebl', value = '', onChange, suffix, placeholde
   };
 
   return (
-    <div style={{ height: '48px', background: '#E9E9E9', display: 'flex', borderRadius: '18px' }}>
-      <span
-        style={{
-          fontSize: '16px',
-          fontWeight: 600,
-          width: '150px',
-          height: '48px',
-          lineHeight: '48px',
-          padding: '0 20px',
-          boxSizing: 'content-box',
-        }}
-        className="test"
+    <div
+      style={{
+        width: '100',
+        height: '48px',
+        background: '#E9E9E9',
+        display: 'flex',
+        borderRadius: '18px',
+      }}
+    >
+      <div
+        className={cn(
+          'flex-1 flex justify-between items-center',
+          'w-[100%] h-12 rounded-2xl px-4 bg-[#E9E9E9] mb-2 text-[16px]'
+        )}
       >
         {label}
-      </span>
-      <input
-        type="text"
-        onChange={handleChange}
-        style={{
-          flex: 1,
-          fontSize: '16px',
-          border: 'none',
-          background: 'none',
-          padding: 'none',
-          margin: 'none',
-          outline: 'none',
-          height: '48px',
-          lineHeight: '48px',
-        }}
-        placeholder={placeholder}
-        value={value}
-      />
+        <input
+          className={cn('h-[100%] w-[50%] bg-[#E9E9E9] text-right')}
+          placeholder={placeholder}
+          style={{ outline: 'none' }}
+        />
+      </div>
       {suffix}
     </div>
   );

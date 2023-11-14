@@ -15,10 +15,7 @@ import { createRoot } from 'react-dom/client';
 import Popup from '~popup';
 import styleText from 'data-text:../globals.css';
 export const config: PlasmoCSConfig = {
-  matches: [
-    // 'https://twitter.com/*',
-    'https://www.baidu.com/*',
-  ],
+  matches: ['https://twitter.com/*', 'https://www.baidu.com/*'],
 };
 export const getStyle: PlasmoGetStyle = () => {
   const style = document.createElement('style');
@@ -26,10 +23,10 @@ export const getStyle: PlasmoGetStyle = () => {
   return style;
 };
 export const getInlineAnchor: PlasmoGetInlineAnchor = async () =>
-  document.querySelector(
-    "div[data-testid='sidebarColumn'] > div > div:nth-child(2) > div > div > div > div:nth-child(2)"
-  );
-// document.querySelector("div[id='lg']");
+  // document.querySelector(
+  //   "div[data-testid='sidebarColumn'] > div > div:nth-child(2) > div > div > div > div:nth-child(2)"
+  // );
+  document.querySelector("div[id='lg']");
 // export const getRootContainer = async () =>
 //   new Promise((resolve, reject) => {
 //     const checkInterval = setInterval(() => {

@@ -1,5 +1,6 @@
 import { Button } from '~components/ui/button';
 import { useWallet } from '../../hooks/useWallet';
+import { useNavigate } from 'react-router-dom';
 import { TwitterName } from './TwitterName';
 import { urlFormat, addressFormat } from '~popup/utils';
 import { useCallback, useContext, useState } from 'react';
@@ -9,7 +10,7 @@ import { useConfigStore } from '~popup/store';
 
 import cn from 'classnames';
 
-export default function Header({ isNeedCopyAddress = false, isSend = false }) {
+export default function Header({ isBack = false, isNeedCopyAddress = false, isSend = false }) {
   const { isShowMoney, setIsShowMoney } = useConfigStore();
   const { userInfo } = useContext(XWalletProviderContext);
   const address = '0x11111111111111';
@@ -22,10 +23,25 @@ export default function Header({ isNeedCopyAddress = false, isSend = false }) {
     console.log('copied');
   }, []);
 
+  const navigate = useNavigate();
+  const goBack = useCallback(() => {
+    navigate(-1);
+  }, []);
+
   return (
     <div className="py-3 px-7 bg-white rounded-t-2xl">
       <div className="flex justify-between items-center mb-5">
-        <div className="back">back</div>
+        {isBack ? (
+          <div
+            className={cn(
+              'w-16 h-8 text-white bg-[#D9D9D9] cursor-pointer rounded-2xl',
+              'flex justify-center items-center text-2xl font-bold'
+            )}
+            onClick={goBack}
+          >
+            ←
+          </div>
+        ) : null}
 
         <TwitterName handle={userInfo?.handleName ?? 'User'} />
         <div className="flex items-center ">
@@ -36,6 +52,7 @@ export default function Header({ isNeedCopyAddress = false, isSend = false }) {
                 'bg-[#0F141A] border-[#0F141A] rounded-2xl',
                 'flex justify-center items-center text-white'
               )}
+              onClick={() => navigate('/send')}
             >
               Send
             </Button>

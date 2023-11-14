@@ -28,8 +28,8 @@ export default function App() {
             </>
           }
         />
-        {/* <Route
-          path="/"
+        <Route
+          path="/send"
           element={
             <>
               <PrivateRoute>
@@ -37,7 +37,7 @@ export default function App() {
               </PrivateRoute>
             </>
           }
-        /> */}
+        />
         <Route
           path="/login"
           element={

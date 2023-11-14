@@ -8,7 +8,15 @@ type PropsType = {
 
 const StyledDesc = ({ label = 'laebl', value = '', suffix }: PropsType) => {
   return (
-    <div style={{ height: '48px', background: '#E9E9E9', display: 'flex', borderRadius: '18px' }}>
+    <div
+      style={{
+        width: '100%',
+        height: '48px',
+        background: '#E9E9E9',
+        display: 'flex',
+        borderRadius: '18px',
+      }}
+    >
       <span
         style={{
           fontSize: '16px',
