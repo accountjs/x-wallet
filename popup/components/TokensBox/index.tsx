@@ -9,7 +9,9 @@ interface TokenItem {
 
 function TokensBox() {
   const [tokensList, setTokenList] = useState<TokenItem[]>([
-    { token: "ETH", amount: "11" },
+    { token: "ETH", amount: "0.0" },
+    { token: "MATIC", amount: "0.0" },
+    { token: "USDT", amount: "0.0" },
   ]);
   const { isShowMoney } = useConfigStore();
 

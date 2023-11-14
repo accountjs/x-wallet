@@ -7,7 +7,7 @@ import HistoryBox from "../HistoryBox";
 
 const TabsArr = ["Tokens", "NFTs", "History"];
 export default function Content() {
-  const [tabActive, setTabActive] = useState("activity");
+  const [tabActive, setTabActive] = useState("Tokens");
 
   return (
     <Tabs defaultValue={tabActive} className="min-h-[170px]">
