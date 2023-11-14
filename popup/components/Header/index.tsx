@@ -24,11 +24,11 @@ export default function Header() {
   return (
     <div className="py-3 px-7 bg-white">
       <div className="flex justify-between items-center p-2 mb-5">
-        <TwitterName handle={userInfo?.handleName ?? ""} />
+        <TwitterName handle={userInfo?.handleName ?? "User"} />
         <div className="flex items-center ">
           <Button
             className={cn(
-              "w-20 h-8 border-[#0F141A] p-0 rounded-2xl mr-3 bg-[#0F141A]",
+              "w-20 h-8 mr-3 p-0 bg-[#0F141A] border-[#0F141A] rounded-2xl",
               "flex justify-center items-center text-white"
             )}>
             Send

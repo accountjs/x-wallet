@@ -34,7 +34,7 @@ function TokensBox() {
               "flex justify-between items-center",
               "h-10 w-[320px] px-6 py-2 mb-3 rounded-2xl bg-white"
             )}>
-            <span>to {i.token}</span>
+            <span>{i.token}</span>
             <span>{isShowMoney ? <span>{i.amount}</span> : "***"}</span>
           </div>
         ))
