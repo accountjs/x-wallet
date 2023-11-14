@@ -22,20 +22,21 @@ export default function Header() {
   }, []);
 
   return (
-    <div className="py-3 px-7 bg-white">
+    <div className="py-3 px-7 bg-white rounded-t-2xl">
       <div className="flex justify-between items-center p-2 mb-5">
         <TwitterName handle={userInfo?.handleName ?? "User"} />
         <div className="flex items-center ">
           <Button
             className={cn(
-              "w-20 h-8 mr-3 p-0 bg-[#0F141A] border-[#0F141A] rounded-2xl",
+              "w-20 h-8 mr-3 p-0", 
+              "bg-[#0F141A] border-[#0F141A] rounded-2xl",
               "flex justify-center items-center text-white"
             )}>
             Send
           </Button>
           <img
             src={urlFormat("setting")}
-            className="w-6 h-6 object-contain"></img>
+            className="w-8 h-8 object-contain"></img>
         </div>
       </div>
       <div className="flex justify-between">

@@ -26,7 +26,7 @@ function NFTsBox() {
   return (
     <div
       className={cn(
-        "px-5 py-4 h-[170px]",
+        "px-5 py-4 h-[170px] rounded-b-2xl",
         "bg-[#E9E9E9] text-center relative",
         "overflow-y-hidden overflow-x-scroll"
       )}>

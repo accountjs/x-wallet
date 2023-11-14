@@ -5,7 +5,7 @@ import TokensBox from "../TokensBox";
 import NFTsBox from "../NFTsBox";
 import HistoryBox from "../HistoryBox";
 
-const TabsArr = ["Tokens", "NFTs", "activity"];
+const TabsArr = ["Tokens", "NFTs", "History"];
 export default function Content() {
   const [tabActive, setTabActive] = useState("activity");
 
@@ -37,7 +37,7 @@ export default function Content() {
       <TabsContent value="NFTs">
         <NFTsBox />
       </TabsContent>
-      <TabsContent value="activity">
+      <TabsContent value="History">
         <HistoryBox />
       </TabsContent>
     </Tabs>

@@ -4,7 +4,7 @@ import Header from "./Header";
 export default function Home() {
   return (
     <>
-      <div className="flex flex-col">
+      <div className="flex flex-col border border-[#ECECEC] rounded-2xl">
         <Header />
         <Content />
         {/* <Footer /> */}

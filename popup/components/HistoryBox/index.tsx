@@ -25,7 +25,7 @@ function HistoryBox() {
   }, []);
 
   return (
-    <div className="bg-[#E9E9E9] text-center px-5 py-4 h-[170px] relative">
+    <div className="bg-[#E9E9E9] text-center px-5 py-4 h-[170px] relative rounded-b-2xl">
       {historyList.length === 0 ? (
         <div
           className={cn(
