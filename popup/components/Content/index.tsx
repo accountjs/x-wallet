@@ -26,7 +26,8 @@ export default function Content() {
               }
             )}
             value={i}
-            onClick={() => setTabActive(i)}>
+            onClick={() => setTabActive(i)}
+          >
             {i}
           </TabsTrigger>
         ))}

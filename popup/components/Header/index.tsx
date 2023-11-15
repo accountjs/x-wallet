@@ -1,5 +1,4 @@
 import { Button } from "~components/ui/button";
-
 import { TwitterName } from "./TwitterName";
 import { urlFormat, addressFormat } from "~popup/utils";
 import { useCallback, useContext, useState } from "react";
@@ -11,7 +10,6 @@ import cn from "classnames";
 export default function Header() {
   const { isShowMoney, setIsShowMoney } = useConfigStore();
   const { userInfo } = useContext(XWalletProviderContext);
-  const address = "0x11111111111111";
 
   const handleShowMoney = useCallback(() => {
     setIsShowMoney();
@@ -24,7 +22,7 @@ export default function Header() {
   return (
     <div className="py-3 px-7 bg-white rounded-t-2xl">
       <div className="flex justify-between items-center mb-5">
-        <TwitterName handle={userInfo?.handleName ?? "User"} />
+        <TwitterName handle={userInfo?.username ?? "User"} />
         <div className="flex items-center ">
           <Button
             className={cn(
@@ -44,11 +42,14 @@ export default function Header() {
       <div className="flex justify-between">
         <div className="flex items-center">
           <span className="mr-2 text-[#5B6A78] text-sm font-semibold">
-            {addressFormat(address)}
+            {addressFormat(userInfo?.accountAddress)}
           </span>
 
           <div className="cursor-pointer">
-            <CopyToClipboard text={address} onCopy={handleCopyAddress}>
+            <CopyToClipboard
+              text={userInfo?.accountAddress}
+              onCopy={handleCopyAddress}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="12"

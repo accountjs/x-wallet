@@ -18,13 +18,14 @@ export default function Login() {
       <div className="flex flex-col items-center gap-14 ">
         <img
           className="w-36 h-24 object-contain"
-          src={urlFormat("welcome-logo")}></img>
+          src={urlFormat("welcome-logo")}
+        ></img>
         <Button
           className="w-full h-11 text-xl/[1.5125rem] rounded-[2.5rem]"
           onClick={() => {
-            // login();
-            navigate("/");
-          }}>
+            login();
+          }}
+        >
           {loginLoading ? "loading ..." : "connect to X-Wallet"}
         </Button>
       </div>
