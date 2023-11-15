@@ -8,10 +8,9 @@ import SendNFT from './SendNFT';
 import BasePageWrap from './components/BasePageWrap';
 import Send from './components/Send';
 export default function App() {
-  const { isLogin = true } = useContext(XWalletProviderContext);
+  const { isLogin } = useContext(XWalletProviderContext);
   const PrivateRoute = ({ children }) => {
-    console.log('xxxx');
-    return children;
+    // return children;
     return isLogin ? <>{children}</> : <Navigate to="/login" replace />;
   };
 
