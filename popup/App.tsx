@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import SendNFT from './SendNFT';
+import SendToken from './SendToken';
 import Home from './components/Home';
 import Login from './components/Login';
-import Send from './components/Send';
 import TransactionDetail from './components/TransactionDetail';
 import { XWalletProviderContext } from './context';
 export default function App() {
@@ -31,7 +31,7 @@ export default function App() {
           element={
             <>
               <PrivateRoute>
-                <Send />
+                <SendToken token="matic" />
               </PrivateRoute>
             </>
           }

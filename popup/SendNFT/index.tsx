@@ -12,7 +12,7 @@ function SendNFT() {
   const [targetAddress, setTargetAddress] = useState('');
 
   return (
-    <div className="p-4 relative pb-6 h-[100%]">
+    <div className="p-4 relative pb-6 h-[100%] border border-[#ECECEC] rounded-2xl">
       <div
         className={cn(
           'w-12 h-8 text-white bg-[#D9D9D9] cursor-pointer rounded-2xl',
