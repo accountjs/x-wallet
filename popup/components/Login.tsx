@@ -1,8 +1,8 @@
+import welcome from 'data-base64:~popup/assets/svg/welcome-logo.png';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '~components/ui/button';
 import { XWalletProviderContext } from '~popup/context';
-import welcome from 'data-base64:~popup/assets/svg/welcome-logo.png';
 
 export default function Login() {
   const { isLogin, login, loginLoading } = useContext(XWalletProviderContext);

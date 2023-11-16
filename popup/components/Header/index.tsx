@@ -1,12 +1,13 @@
-import { Button } from '~components/ui/button';
-import { TwitterName } from './TwitterName';
-import { urlFormat, addressFormat } from '~popup/utils';
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { XWalletProviderContext } from '~popup/context';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { useConfigStore } from '~popup/store';
-import { useNavigate } from 'react-router-dom';
 import cn from 'classnames';
+import matic from 'data-base64:~popup/assets/svg/matic.png';
+import { useCallback, useContext } from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '~components/ui/button';
+import { XWalletProviderContext } from '~popup/context';
+import { useConfigStore } from '~popup/store';
+import { addressFormat } from '~popup/utils';
+import { TwitterName } from './TwitterName';
 
 export default function Header() {
   const { isShowMoney, setIsShowMoney } = useConfigStore();
@@ -42,10 +43,7 @@ export default function Header() {
           >
             Send
           </Button>
-          <img
-            src={urlFormat('setting')}
-            className="w-8 h-8 object-contain"
-          ></img>
+          <img src={matic} className="w-8 h-8 object-contain"></img>
         </div>
       </div>
       <div className="flex justify-between">
