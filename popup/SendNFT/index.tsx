@@ -15,7 +15,7 @@ function SendNFT() {
     <div className="p-4 relative pb-6 h-[100%]">
       <div
         className={cn(
-          'w-16 h-8 text-white bg-[#D9D9D9] cursor-pointer rounded-2xl',
+          'w-12 h-8 text-white bg-[#D9D9D9] cursor-pointer rounded-2xl',
           'flex justify-center items-center text-2xl font-bold'
         )}
         onClick={goBack}

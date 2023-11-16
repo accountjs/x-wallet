@@ -9,7 +9,7 @@ interface TokenItem {
 }
 
 function TokensBox() {
-  const { ethBalance, usdtBalance } = useContext(XWalletProviderContext);
+  const { userInfo, ethBalance, usdtBalance, updateBalance } = useContext(XWalletProviderContext);
   const [tokensList, setTokenList] = useState<TokenItem[]>([
     { token: 'MATIC', amount: '0.0' },
     { token: 'USDT', amount: '0.0' },
@@ -17,11 +17,17 @@ function TokensBox() {
   const { isShowMoney } = useConfigStore();
 
   useEffect(() => {
+    console.log('ethBalance', ethBalance, 'usdtBalance', usdtBalance);
     setTokenList([
       { token: 'MATIC', amount: ethBalance },
       { token: 'USDT', amount: usdtBalance },
     ]);
-  }, [ethBalance]);
+  }, []);
+
+  useEffect(() => {
+    console.log('updateBalance accountAddress', userInfo?.accountAddress);
+    updateBalance();
+  }, [userInfo]);
 
   return (
     <div className="bg-[#E9E9E9] text-center px-5 py-4 h-[170px] relative rounded-b-2xl">

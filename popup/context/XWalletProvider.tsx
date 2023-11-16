@@ -49,8 +49,8 @@ export interface UserInfo {
   username: string;
   twitterId: string;
   twitterName: string;
-  ownerAddress: string;
-  accountAddress: string;
+  ownerAddress: `0x${string}`;
+  accountAddress: `0x${string}`;
 }
 const chainConfig = {
   chainNamespace: 'eip155',
@@ -117,15 +117,16 @@ export function XWalletProvider({ children }) {
           username,
           twitterId,
           twitterName,
-          ownerAddress: twitterInfo?.owner_address ?? '',
-          accountAddress: twitterInfo?.account_address ?? '',
+          ownerAddress: twitterInfo?.owner_address ?? '0x',
+          accountAddress: twitterInfo?.account_address ?? '0x',
         });
         let accountAddress = twitterInfo?.account_address ?? '';
         let ownerAddress = await getRPCProviderOwner(
           web3auth.provider
         ).getAddress();
-        await getETHBalance(twitterInfo?.account_address ?? '0x');
-        await getUsdtBalance(twitterInfo?.account_address ?? '0x');
+        updateBalance()
+        // await getETHBalance(twitterInfo?.account_address ?? '0x');
+        // await getUsdtBalance(twitterInfo?.account_address ?? '0x');
         try {
           const resp = await deployAccount(ownerAddress, twitterId);
           console.log('deploy', resp);
@@ -285,6 +286,9 @@ export function XWalletProvider({ children }) {
   };
 
   const getETHBalance = async (address: `0x${string}`) => {
+    if (address === '0x') {
+      return '0';
+    }
     const balance = formatEther(
       await publicClient.getBalance({
         address: address,
@@ -295,29 +299,41 @@ export function XWalletProvider({ children }) {
   };
 
   const getUsdtBalance = async (address: `0x${string}`) => {
-    const balance = await publicClient.readContract({
+    if (address === '0x') {
+      return '0';
+    }
+    const balance = formatEther(await publicClient.readContract({
       address: '0x4aAeB0c6523e7aa5Adc77EAD9b031ccdEA9cB1c3',
       abi: ERC20Abi,
       functionName: 'balanceOf',
       args: [address],
-    });
-    setUsdtBalance(formatEther(balance));
+    }));
+    // setUsdtBalance(balance);
     return balance;
   };
+
+  const updateBalance = useCallback(async () => {
+    const ethBalance = await getETHBalance(userInfo.accountAddress);
+    const usdtBalance = await getUsdtBalance(userInfo.accountAddress);
+    setEthBalance(ethBalance);
+    setUsdtBalance(usdtBalance);
+  }, [userInfo]);
 
   return (
     <XWalletProviderContext.Provider
       value={{
         userInfo,
-        ethBalance,
-        usdtBalance,
         isLogin,
         login,
         loginLoading,
         mintNft,
         sendETH,
         sendERC20,
+        ethBalance,
+        usdtBalance,
         getETHBalance,
+        getUsdtBalance,
+        updateBalance,
       }}
     >
       {children}
