@@ -1,12 +1,12 @@
-import { Route, Routes, Navigate } from 'react-router-dom';
-import Login from './components/Login';
-import Home from './components/Home';
-import { useContext } from 'react';
-import { XWalletProviderContext } from './context';
-import TransactionDetail from './components/TransactionDetail';
-import SendNFT from './SendNFT';
-import BasePageWrap from './components/BasePageWrap';
-import Send from './components/Send';
+import { Route, Routes, Navigate } from "react-router-dom";
+import Login from "./components/Login";
+import Home from "./components/Home";
+import { useContext } from "react";
+import { XWalletProviderContext } from "./context";
+import TransactionDetail from "./components/TransactionDetail";
+import SendNFT from "./SendNFT";
+import BasePageWrap from "./components/BasePageWrap";
+import Send from "./components/Send";
 export default function App() {
   const { isLogin } = useContext(XWalletProviderContext);
   const PrivateRoute = ({ children }) => {
