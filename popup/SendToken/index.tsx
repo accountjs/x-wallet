@@ -134,17 +134,6 @@ function SendToken(props: { token: 'matic' | 'usdt' }) {
           ref={twitterRef}
           onBlur={handleTwitterBlur} // 在失去焦点时调用获取目标地址的函数
         />
-        <div
-          className={cn(
-            'absolute left-1/2 bottom-[-20px]',
-            'px-2 py-1 bg-[#AEAFAE] rounded-xl text-white'
-          )}
-          style={{
-            translate: '-50% 0',
-          }}
-        >
-          ↓
-        </div>
       </div>
 
       {targetAddress && (
