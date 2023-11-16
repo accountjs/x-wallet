@@ -1,7 +1,7 @@
-import React from 'react';
-import Content from '~popup/components/Content';
-import Footer from '~popup/components/Footer';
-import Header from '~popup/components/Header';
+import React from "react";
+import Content from "~popup/components/Content";
+import Footer from "~popup/components/Footer";
+import Header from "~popup/components/Header";
 
 const BasePageWrap = ({
   children,
@@ -12,12 +12,16 @@ const BasePageWrap = ({
 }) => {
   // const defaultChildren = props.children;
 
-  console.log(children, 'defaultchildren');
+  console.log(children, "defaultchildren");
 
   return (
     <>
       <div className="flex flex-col">
-        <Header isBack={isBack} isNeedCopyAddress={isNeedCopyAddress} isSend={isSend} />
+        <Header
+          isBack={isBack}
+          isNeedCopyAddress={isNeedCopyAddress}
+          isSend={isSend}
+        />
         {children}
         {isFooter ? <Footer /> : null}
       </div>
