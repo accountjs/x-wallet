@@ -12,10 +12,6 @@ function NFTsBox() {
     { nft: "" },
     { nft: "" },
     { nft: "" },
-    { nft: "" },
-    { nft: "" },
-    { nft: "" },
-    { nft: "" },
   ]);
   const navigate = useNavigate();
 

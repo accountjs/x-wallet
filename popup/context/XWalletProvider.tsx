@@ -1,35 +1,32 @@
-import React, {
-  createContext,
-  useState,
-  useCallback,
-  useMemo,
-  useEffect,
-} from "react";
-import { NFT_Contract_Abi } from "~contractAbi.js";
-import { encodeFunctionData, parseEther, parseAbi } from "viem";
-import { SecureStorage } from "@plasmohq/storage/secure";
+import { useStorage } from '@plasmohq/storage/hook';
+import { SecureStorage } from '@plasmohq/storage/secure';
+import { WALLET_ADAPTERS } from '@web3auth/base';
+import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider';
+import { Web3AuthNoModal } from '@web3auth/no-modal';
+import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
 import {
   ECDSAProvider,
-  fixSignedData,
-  getRPCProviderOwner,
-} from "@zerodev/sdk";
-import { ZeroDevWeb3Auth } from "@zerodev/web3auth";
-import { useStorage } from "@plasmohq/storage/hook";
-import { WALLET_ADAPTERS } from "@web3auth/base";
-import { Web3AuthNoModal } from "@web3auth/no-modal";
-import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
-import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
+  getRPCProviderOwner
+} from '@zerodev/sdk';
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useState
+} from 'react';
+import { encodeFunctionData, parseAbi, parseEther } from 'viem';
+import { NFT_Contract_Abi } from '~contractAbi.js';
 
 export const XWalletProviderContext = createContext(undefined);
-const DEFAULT_PROJECT_ID = "c1148dbd-a7a2-44b1-be79-62a54c552287";
+const DEFAULT_PROJECT_ID = 'c1148dbd-a7a2-44b1-be79-62a54c552287';
 const NFT_CONTRACT_ABI = NFT_Contract_Abi;
-const NFT_ADDRESS = "0x34bE7f35132E97915633BC1fc020364EA5134863";
+const NFT_ADDRESS = '0x34bE7f35132E97915633BC1fc020364EA5134863';
 const TRANSFER_FUNC_ABI = parseAbi([
-  "function transfer(address recipient, uint256 amount) public",
+  'function transfer(address recipient, uint256 amount) public',
 ]); // TODO: token ABI
 
 const storage = new SecureStorage();
-storage.setPassword("Xwallet");
+storage.setPassword('Xwallet');
 
 export interface UserInfo {
   username: string;
@@ -39,19 +36,19 @@ export interface UserInfo {
   accountAddress: string;
 }
 const chainConfig = {
-  chainNamespace: "eip155",
-  chainId: "0x1",
-  rpcTarget: "https://rpc.ankr.com/eth",
-  displayName: "Ethereum Mainnet",
-  blockExplorer: "https://goerli.etherscan.io",
-  ticker: "ETH",
-  tickerName: "Ethereum",
+  chainNamespace: 'eip155',
+  chainId: '0x1',
+  rpcTarget: 'https://rpc.ankr.com/eth',
+  displayName: 'Ethereum Mainnet',
+  blockExplorer: 'https://goerli.etherscan.io',
+  ticker: 'ETH',
+  tickerName: 'Ethereum',
 };
 
 export function XWalletProvider({ children }) {
   const [isLogin, setIsLogin] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
-  const [userInfo, setUserInfo] = useStorage<UserInfo>("user-info");
+  const [userInfo, setUserInfo] = useStorage<UserInfo>('user-info');
   const [ecdsaProvider, setEcdsaProvider] = useState<ECDSAProvider | null>(
     null
   );
@@ -61,9 +58,8 @@ export function XWalletProvider({ children }) {
     const init = async () => {
       try {
         const web3auth = new Web3AuthNoModal({
-          clientId:
-            "BIwT5GCxEqEm6Nm6_DtLcl3IMdR2SmqJJNUYhBX2v3J_vCIlyBCjokH5vD_95_-5iKDKygC-li7pCoh1coRTTi8",
-          web3AuthNetwork: "sapphire_devnet",
+          clientId: 'BIwT5GCxEqEm6Nm6_DtLcl3IMdR2SmqJJNUYhBX2v3J_vCIlyBCjokH5vD_95_-5iKDKygC-li7pCoh1coRTTi8',
+          web3AuthNetwork: 'sapphire_devnet',
           // @ts-ignore
           chainConfig,
         });
@@ -93,22 +89,22 @@ export function XWalletProvider({ children }) {
         let twitterInfo = await getAddressById(twitterId);
 
         // console.log(userinfo, twitterInfo);
-        let twitterName = twitterInfo?.user_info?.name ?? "";
-        let username = twitterInfo?.user_info?.username ?? "";
+        let twitterName = twitterInfo?.user_info?.name ?? '';
+        let username = twitterInfo?.user_info?.username ?? '';
         setUserInfo({
           username,
           twitterId,
           twitterName,
-          ownerAddress: twitterInfo?.owner_address ?? "",
-          accountAddress: twitterInfo?.account_address ?? "",
+          ownerAddress: twitterInfo?.owner_address ?? '',
+          accountAddress: twitterInfo?.account_address ?? '',
         });
-        let accountAddress = twitterInfo?.account_address ?? "";
+        let accountAddress = twitterInfo?.account_address ?? '';
         let ownerAddress = await getRPCProviderOwner(
           web3auth.provider
         ).getAddress();
         try {
           const resp = await deployAccount(ownerAddress, twitterId);
-          console.log("deploy", resp);
+          console.log('deploy', resp);
         } catch (e) {
           console.log(e);
         }
@@ -134,7 +130,7 @@ export function XWalletProvider({ children }) {
 
     try {
       await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
-        loginProvider: "twitter",
+        loginProvider: 'twitter',
       });
     } catch (e) {
       // console.log(e);
@@ -149,11 +145,11 @@ export function XWalletProvider({ children }) {
       target: NFT_ADDRESS,
       data: encodeFunctionData({
         abi: NFT_CONTRACT_ABI,
-        functionName: "mint",
+        functionName: 'mint',
         args: [accountAddress],
       }),
     });
-    console.log("Mint to", accountAddress, "hash", hash);
+    console.log('Mint to', accountAddress, 'hash', hash);
     return hash;
   }, [ecdsaProvider]);
 
@@ -163,10 +159,10 @@ export function XWalletProvider({ children }) {
       let toAddress = await checkTarget(target);
       const { hash } = await ecdsaProvider.sendUserOperation({
         target: toAddress,
-        data: "0x",
+        data: '0x',
         value: parseEther(value),
       });
-      console.log("Send to", toAddress, "ETH", value, "hash", hash);
+      console.log('Send to', toAddress, 'ETH', value, 'hash', hash);
       return hash;
     },
     [ecdsaProvider]
@@ -180,18 +176,18 @@ export function XWalletProvider({ children }) {
         target: tokenAddress,
         data: encodeFunctionData({
           abi: TRANSFER_FUNC_ABI,
-          functionName: "transfer",
+          functionName: 'transfer',
           args: [toAddress, parseEther(value)],
         }),
       });
       console.log(
-        "Send to",
+        'Send to',
         toAddress,
-        "Token",
+        'Token',
         tokenAddress,
-        "Value",
+        'Value',
         value,
-        "hash",
+        'hash',
         hash
       );
       return hash;
@@ -205,7 +201,7 @@ export function XWalletProvider({ children }) {
       return target;
     } else {
       const repo = await getAddress(target);
-      return repo["account_address"];
+      return repo['account_address'];
     }
   };
 
@@ -214,12 +210,12 @@ export function XWalletProvider({ children }) {
       handle,
     });
     const response = await fetch(
-      "https://x-wallet-backend.vercel.app/api/getAddress",
+      'https://x-wallet-backend.vercel.app/api/getAddress',
       {
-        method: "POST",
-        mode: "cors",
+        method: 'POST',
+        mode: 'cors',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: requestBody,
       }
@@ -232,12 +228,12 @@ export function XWalletProvider({ children }) {
       id,
     });
     const response = await fetch(
-      "https://x-wallet-backend.vercel.app/api/getAddressById",
+      'https://x-wallet-backend.vercel.app/api/getAddressById',
       {
-        method: "POST",
-        mode: "cors",
+        method: 'POST',
+        mode: 'cors',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: requestBody,
       }
@@ -251,12 +247,12 @@ export function XWalletProvider({ children }) {
       id: id,
     });
     const response = await fetch(
-      "https://x-wallet-backend.vercel.app/api/deploy",
+      'https://x-wallet-backend.vercel.app/api/deploy',
       {
-        method: "POST",
-        mode: "cors",
+        method: 'POST',
+        mode: 'cors',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: requestBody,
       }
