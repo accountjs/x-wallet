@@ -10,11 +10,15 @@ import {
   encodeFunctionData,
   parseEther,
   parseAbi,
-  createWalletClient,
+  formatEther,
+  createPublicClient,
+  http,
 } from 'viem';
+import { polygonMumbai } from 'viem/chains';
 import { SecureStorage } from '@plasmohq/storage/secure';
 import {
   ECDSAProvider,
+  ERC20Abi,
   fixSignedData,
   getRPCProviderOwner,
 } from '@zerodev/sdk';
@@ -24,6 +28,11 @@ import { WALLET_ADAPTERS } from '@web3auth/base';
 import { Web3AuthNoModal } from '@web3auth/no-modal';
 import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider';
 import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
+
+export const publicClient = createPublicClient({
+  chain: polygonMumbai,
+  transport: http(),
+});
 
 export const XWalletProviderContext = createContext(undefined);
 const DEFAULT_PROJECT_ID = 'c1148dbd-a7a2-44b1-be79-62a54c552287';
@@ -57,6 +66,8 @@ const chainConfig = {
 
 export function XWalletProvider({ children }) {
   const [isLogin, setIsLogin] = useState(false);
+  const [ethBalance, setEthBalance] = useState('0');
+  const [usdtBalance, setUsdtBalance] = useState('0');
   const [loginLoading, setLoginLoading] = useState(false);
   const [userInfo, setUserInfo] = useStorage<UserInfo>('user-info');
   const [ecdsaProvider, setEcdsaProvider] = useState<ECDSAProvider | null>(
@@ -113,6 +124,8 @@ export function XWalletProvider({ children }) {
         let ownerAddress = await getRPCProviderOwner(
           web3auth.provider
         ).getAddress();
+        await getETHBalance(twitterInfo?.account_address ?? '0x');
+        await getUsdtBalance(twitterInfo?.account_address ?? '0x');
         try {
           const resp = await deployAccount(ownerAddress, twitterId);
           console.log('deploy', resp);
@@ -271,16 +284,40 @@ export function XWalletProvider({ children }) {
     return await response.json();
   };
 
+  const getETHBalance = async (address: `0x${string}`) => {
+    const balance = formatEther(
+      await publicClient.getBalance({
+        address: address,
+      })
+    );
+    setEthBalance(balance);
+    return balance;
+  };
+
+  const getUsdtBalance = async (address: `0x${string}`) => {
+    const balance = await publicClient.readContract({
+      address: '0x4aAeB0c6523e7aa5Adc77EAD9b031ccdEA9cB1c3',
+      abi: ERC20Abi,
+      functionName: 'balanceOf',
+      args: [address],
+    });
+    setUsdtBalance(formatEther(balance));
+    return balance;
+  };
+
   return (
     <XWalletProviderContext.Provider
       value={{
         userInfo,
+        ethBalance,
+        usdtBalance,
         isLogin,
         login,
         loginLoading,
         mintNft,
         sendETH,
         sendERC20,
+        getETHBalance,
       }}
     >
       {children}

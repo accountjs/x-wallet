@@ -11,7 +11,9 @@ import { TwitterName } from './TwitterName';
 
 export default function Header() {
   const { isShowMoney, setIsShowMoney } = useConfigStore();
-  const { userInfo } = useContext(XWalletProviderContext);
+  const { userInfo, ethBalance, usdtBalance } = useContext(
+    XWalletProviderContext
+  );
   const navigate = useNavigate();
 
   const handleShowMoney = useCallback(() => {
@@ -120,7 +122,9 @@ export default function Header() {
         </div>
       </div>
       <div className="text-3xl font-semibold mt-5 mb-6">
-        {isShowMoney ? `$ ${0}` : '**********'}
+        {isShowMoney
+          ? `$ ${Number(ethBalance) * 0.9 + Number(usdtBalance)}`
+          : '**********'}
       </div>
     </div>
   );
