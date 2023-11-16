@@ -108,7 +108,7 @@ export function XWalletProvider({ children }) {
       (async () => {
         const userinfo = await web3auth.getUserInfo();
         let twitterId = userinfo.verifierId.match(/(\d+)/)[0];
-        let twitterInfo = await getAddressById(twitterId);
+        let twitterInfo = await getXWalletAddressById(twitterId);
 
         // console.log(userinfo, twitterInfo);
         let twitterName = twitterInfo?.user_info?.name ?? '';
@@ -128,7 +128,7 @@ export function XWalletProvider({ children }) {
         // await getETHBalance(twitterInfo?.account_address ?? '0x');
         // await getUsdtBalance(twitterInfo?.account_address ?? '0x');
         try {
-          const resp = await deployAccount(ownerAddress, twitterId);
+          const resp = await deployXWallet(ownerAddress, twitterId);
           console.log('deploy', resp);
         } catch (e) {
           console.log(e);
@@ -225,12 +225,12 @@ export function XWalletProvider({ children }) {
     if (isEthereumAddress) {
       return target;
     } else {
-      const repo = await getAddress(target);
+      const repo = await getXWalletAddress(target);
       return repo['account_address'];
     }
   };
 
-  const getAddress = async (handle: string) => {
+  const getXWalletAddress = async (handle: string) => {
     const requestBody = JSON.stringify({
       handle,
     });
@@ -248,7 +248,7 @@ export function XWalletProvider({ children }) {
     return await response.json();
   };
 
-  const getAddressById = async (id: string) => {
+  const getXWalletAddressById = async (id: string) => {
     const requestBody = JSON.stringify({
       id,
     });
@@ -266,7 +266,7 @@ export function XWalletProvider({ children }) {
     return await response.json();
   };
 
-  const deployAccount = async (newOwner: `0x${string}`, id: string) => {
+  const deployXWallet = async (newOwner: `0x${string}`, id: string) => {
     const requestBody = JSON.stringify({
       newOwner: newOwner,
       id: id,
@@ -334,6 +334,7 @@ export function XWalletProvider({ children }) {
         getETHBalance,
         getUsdtBalance,
         updateBalance,
+        getXWalletAddress,
       }}
     >
       {children}
