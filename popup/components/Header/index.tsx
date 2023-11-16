@@ -1,16 +1,18 @@
-import { Button } from "~components/ui/button";
-import { TwitterName } from "./TwitterName";
-import { urlFormat, addressFormat } from "~popup/utils";
-import { useCallback, useContext, useState } from "react";
-import { XWalletProviderContext } from "~popup/context";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { useConfigStore } from "~popup/store";
-import { useNavigate } from "react-router-dom";
-import cn from "classnames";
+import { Button } from '~components/ui/button';
+import { TwitterName } from './TwitterName';
+import { urlFormat, addressFormat } from '~popup/utils';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { XWalletProviderContext } from '~popup/context';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { useConfigStore } from '~popup/store';
+import { useNavigate } from 'react-router-dom';
+import cn from 'classnames';
 
 export default function Header() {
   const { isShowMoney, setIsShowMoney } = useConfigStore();
-  const { userInfo } = useContext(XWalletProviderContext);
+  const { userInfo, ethBalance, usdtBalance } = useContext(
+    XWalletProviderContext
+  );
   const navigate = useNavigate();
 
   const handleShowMoney = useCallback(() => {
@@ -18,30 +20,30 @@ export default function Header() {
   }, []);
 
   const handleCopyAddress = useCallback(() => {
-    console.log("copied");
+    console.log('copied');
   }, []);
 
   const handleToSend = useCallback(() => {
-    navigate("/send");
+    navigate('/send');
   }, []);
 
   return (
     <div className="py-3 px-7 bg-white rounded-t-2xl">
       <div className="flex justify-between items-center mb-5">
-        <TwitterName handle={userInfo?.username ?? "User"} />
+        <TwitterName handle={userInfo?.username ?? 'User'} />
         <div className="flex items-center ">
           <Button
             onClick={handleToSend}
             className={cn(
-              "w-20 h-8 mr-4",
-              "bg-[#0F141A] border-[#0F141A] rounded-2xl",
-              "flex justify-center items-center text-white"
+              'w-20 h-8 mr-4',
+              'bg-[#0F141A] border-[#0F141A] rounded-2xl',
+              'flex justify-center items-center text-white'
             )}
           >
             Send
           </Button>
           <img
-            src={urlFormat("setting")}
+            src={urlFormat('setting')}
             className="w-8 h-8 object-contain"
           ></img>
         </div>
@@ -122,7 +124,9 @@ export default function Header() {
         </div>
       </div>
       <div className="text-3xl font-semibold mt-5 mb-6">
-        {isShowMoney ? `$ ${0}` : "**********"}
+        {isShowMoney
+          ? `$ ${Number(ethBalance) * 0.9 + Number(usdtBalance)}`
+          : '**********'}
       </div>
     </div>
   );
