@@ -1,21 +1,29 @@
-import { useStorage } from '@plasmohq/storage/hook';
+import React, {
+  createContext,
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+} from 'react';
+import { NFT_Contract_Abi } from '~contractAbi.js';
+import {
+  encodeFunctionData,
+  parseEther,
+  parseAbi,
+  createWalletClient,
+} from 'viem';
 import { SecureStorage } from '@plasmohq/storage/secure';
-import { WALLET_ADAPTERS } from '@web3auth/base';
-import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider';
-import { Web3AuthNoModal } from '@web3auth/no-modal';
-import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
 import {
   ECDSAProvider,
-  getRPCProviderOwner
+  fixSignedData,
+  getRPCProviderOwner,
 } from '@zerodev/sdk';
-import {
-  createContext,
-  useCallback,
-  useEffect,
-  useState
-} from 'react';
-import { encodeFunctionData, parseAbi, parseEther } from 'viem';
-import { NFT_Contract_Abi } from '~contractAbi.js';
+import { ZeroDevWeb3Auth } from '@zerodev/web3auth';
+import { useStorage } from '@plasmohq/storage/hook';
+import { WALLET_ADAPTERS } from '@web3auth/base';
+import { Web3AuthNoModal } from '@web3auth/no-modal';
+import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider';
+import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
 
 export const XWalletProviderContext = createContext(undefined);
 const DEFAULT_PROJECT_ID = 'c1148dbd-a7a2-44b1-be79-62a54c552287';
@@ -37,12 +45,14 @@ export interface UserInfo {
 }
 const chainConfig = {
   chainNamespace: 'eip155',
-  chainId: '0x1',
-  rpcTarget: 'https://rpc.ankr.com/eth',
-  displayName: 'Ethereum Mainnet',
-  blockExplorer: 'https://goerli.etherscan.io',
-  ticker: 'ETH',
-  tickerName: 'Ethereum',
+  chainId: '0x13881', // hex of 80001, polygon testnet
+  rpcTarget: 'https://rpc.ankr.com/polygon_mumbai',
+  // Avoid using public rpcTarget in production.
+  // Use services like Infura, Quicknode etc
+  displayName: 'Polygon Mumbai Testnet',
+  blockExplorer: 'https://mumbai.polygonscan.com/',
+  ticker: 'MATIC',
+  tickerName: 'Matic',
 };
 
 export function XWalletProvider({ children }) {
@@ -58,8 +68,9 @@ export function XWalletProvider({ children }) {
     const init = async () => {
       try {
         const web3auth = new Web3AuthNoModal({
-          clientId: 'BIwT5GCxEqEm6Nm6_DtLcl3IMdR2SmqJJNUYhBX2v3J_vCIlyBCjokH5vD_95_-5iKDKygC-li7pCoh1coRTTi8',
-          web3AuthNetwork: 'sapphire_devnet',
+          clientId:
+            'BIwT5GCxEqEm6Nm6_DtLcl3IMdR2SmqJJNUYhBX2v3J_vCIlyBCjokH5vD_95_-5iKDKygC-li7pCoh1coRTTi8',
+          web3AuthNetwork: 'sapphire_mainnet',
           // @ts-ignore
           chainConfig,
         });
