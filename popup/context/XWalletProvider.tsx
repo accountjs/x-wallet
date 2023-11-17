@@ -1,33 +1,21 @@
-import React, {
-  createContext,
-  useState,
-  useCallback,
-  useMemo,
-  useEffect,
-} from 'react';
-import { NFT_Contract_Abi } from '~contractAbi.js';
+import { useStorage } from '@plasmohq/storage/hook';
+import { SecureStorage } from '@plasmohq/storage/secure';
+import { WALLET_ADAPTERS } from '@web3auth/base';
+import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider';
+import { Web3AuthNoModal } from '@web3auth/no-modal';
+import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
+import { ECDSAProvider, ERC20Abi, getRPCProviderOwner } from '@zerodev/sdk';
+import { createContext, useCallback, useEffect, useState } from 'react';
 import {
-  encodeFunctionData,
-  parseEther,
-  parseAbi,
-  formatEther,
   createPublicClient,
+  encodeFunctionData,
+  formatEther,
   http,
+  parseAbi,
+  parseEther,
 } from 'viem';
 import { polygonMumbai } from 'viem/chains';
-import { SecureStorage } from '@plasmohq/storage/secure';
-import {
-  ECDSAProvider,
-  ERC20Abi,
-  fixSignedData,
-  getRPCProviderOwner,
-} from '@zerodev/sdk';
-import { ZeroDevWeb3Auth } from '@zerodev/web3auth';
-import { useStorage } from '@plasmohq/storage/hook';
-import { WALLET_ADAPTERS } from '@web3auth/base';
-import { Web3AuthNoModal } from '@web3auth/no-modal';
-import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider';
-import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
+import { NFT_Contract_Abi } from '~contractAbi.js';
 
 export const publicClient = createPublicClient({
   chain: polygonMumbai,
@@ -52,6 +40,15 @@ export interface UserInfo {
   ownerAddress: `0x${string}`;
   accountAddress: `0x${string}`;
 }
+
+export interface TxRecord {
+  toTwitter: string;
+  toAddress: `0x${string}`;
+  amount: string;
+  currency: string;
+  hash: string;
+}
+
 const chainConfig = {
   chainNamespace: 'eip155',
   chainId: '0x13881', // hex of 80001, polygon testnet
@@ -70,6 +67,7 @@ export function XWalletProvider({ children }) {
   const [usdtBalance, setUsdtBalance] = useState('0');
   const [loginLoading, setLoginLoading] = useState(false);
   const [userInfo, setUserInfo] = useStorage<UserInfo>('user-info');
+  const [txRecords, setTxRecords] = useStorage<TxRecord[]>('tx-history');
   const [ecdsaProvider, setEcdsaProvider] = useState<ECDSAProvider | null>(
     null
   );
@@ -312,6 +310,14 @@ export function XWalletProvider({ children }) {
     setUsdtBalance(usdtBalance);
   }, [userInfo]);
 
+  const appendRecord = useCallback(
+    async (txRecord: TxRecord) => {
+      const txs = [...txRecords, txRecord];
+      setTxRecords(txs);
+    },
+    [userInfo]
+  );
+
   return (
     <XWalletProviderContext.Provider
       value={{
@@ -328,6 +334,8 @@ export function XWalletProvider({ children }) {
         getUsdtBalance,
         updateBalance,
         getXWalletAddress,
+        txRecords,
+        appendRecord,
       }}
     >
       {children}
