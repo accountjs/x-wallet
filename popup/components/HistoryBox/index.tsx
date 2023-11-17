@@ -21,9 +21,8 @@ function HistoryBox() {
   const { isShowMoney } = useConfigStore();
   const navigate = useNavigate();
 
-  const toTransactionDetail = useCallback(() => {
-    //navigate('/transactionDetail');
-    // to explorer
+  const toTransactionDetail = useCallback((hash: `0x${string}`) => {
+    navigate(`/transactionDetail?hash=${hash}`);
   }, []);
 
   return (
@@ -53,7 +52,11 @@ function HistoryBox() {
                     'flex justify-between items-center',
                     'h-10 w-[100%] px-6 py-2 mb-3 rounded-2xl bg-white'
                   )}
-                  onClick={(i) => toTransactionDetail()}
+                  onClick={(i) =>
+                    toTransactionDetail(
+                      '0x9628815ffa0a91bb4ee0e5b5dc25b84c1c0ebd1d1b76975fb6961397f8bac1f3'
+                    )
+                  }
                 >
                   <span>{item.toTwitter}</span>
                   <span

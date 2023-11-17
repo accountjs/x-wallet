@@ -177,6 +177,20 @@ export function XWalletProvider({ children }) {
     return hash;
   }, [ecdsaProvider]);
 
+  const getTransaction = useCallback(
+    async (hash: `0x${string}`) => {
+      return ecdsaProvider.getTransaction(hash);
+    },
+    [ecdsaProvider]
+  );
+
+  const getUserOperationByHash = useCallback(
+    async (hash: `0x${string}`) => {
+      return ecdsaProvider.getUserOperationByHash(hash);
+    },
+    [ecdsaProvider]
+  );
+
   const sendETH = useCallback(
     async (target, value) => {
       // check target
@@ -338,6 +352,8 @@ export function XWalletProvider({ children }) {
         getXWalletAddress,
         txRecords,
         appendRecord,
+        getTransaction,
+        getUserOperationByHash,
       }}
     >
       {children}
