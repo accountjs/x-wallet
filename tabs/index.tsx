@@ -2,8 +2,8 @@ function DeltaFlyerPage() {
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
+        display: 'flex',
+        flexDirection: 'column',
         padding: 16,
       }}
     >

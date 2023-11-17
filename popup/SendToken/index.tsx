@@ -2,36 +2,45 @@ import cn from 'classnames';
 import matic from 'data-base64:~popup/assets/svg/matic.png';
 import usdt from 'data-base64:~popup/assets/svg/usdt.png';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { XWalletProviderContext } from '~popup/context';
 import { addressFormat } from '~popup/utils';
 
-function SendToken(props: { token: 'matic' | 'usdt' }) {
+function SendToken(props: {}) {
   const navigate = useNavigate();
   const goBack = useCallback(() => {
     navigate(-1);
   }, []);
-
-  const { ethBalance, usdtBalance, getXWalletAddress } = useContext(XWalletProviderContext);
+  const [searchParams] = useSearchParams();
+  const { ethBalance, usdtBalance, getXWalletAddress } = useContext(
+    XWalletProviderContext
+  );
 
   const [balance, setBalance] = useState(ethBalance);
   const [amount, setAmount] = useState('');
-  const [selectedCurrency, setSelectedCurrency] = useState(''); // 默认币种
+  const [selectedCurrency, setSelectedCurrency] = useState('matic'); // 默认币种
   const [selectedLogo, setSelectedLogo] = useState(matic); // 显示目标地址
   const [targetAddress, setTargetAddress] = useState('');
 
   useEffect(() => {
-    setSelectedCurrency(props.token);
-    changeBalance(props.token);
+    let tokenType = searchParams.get('token').toLocaleLowerCase();
+    if (tokenType != '') {
+      setSelectedCurrency(tokenType);
+      changeBalance(tokenType);
+    } else {
+      changeBalance(selectedCurrency);
+    }
   }, []);
 
-  const changeBalance = (currency: 'matic' | 'usdt') => {
+  const changeBalance = (currency: string) => {
     if (currency === 'matic') {
       setBalance(ethBalance);
       setSelectedLogo(matic);
     } else if (currency === 'usdt') {
       setBalance(usdtBalance);
       setSelectedLogo(usdt);
+    } else {
+      return;
     }
   };
 
@@ -62,12 +71,12 @@ function SendToken(props: { token: 'matic' | 'usdt' }) {
   const handleTwitterBlur = async () => {
     const twitterUsername = twitterRef.current?.value;
     console.log('Twitter Username', twitterUsername);
-    
+
     if (twitterUsername) {
       // 调用后台接口获取目标地址
-      const data = await getXWalletAddress(twitterUsername)
+      const data = await getXWalletAddress(twitterUsername);
       console.log('Target Address', data.account_address);
-      setTargetAddress(data.account_address)
+      setTargetAddress(data.account_address);
     }
   };
 
@@ -132,7 +141,7 @@ function SendToken(props: { token: 'matic' | 'usdt' }) {
           <option value="usdt">USDT</option>
         </select>
       </div>
-      
+
       {targetAddress && (
         <div className=" flex justify-start text-center text-base pl-2 mb-4">
           <div> To Address: {addressFormat(targetAddress)} </div>
@@ -143,7 +152,8 @@ function SendToken(props: { token: 'matic' | 'usdt' }) {
         className={cn(
           'absolute left-0 bottom-0',
           'w-[100%] h-12 text-center text-white  bg-black leading-[48px]',
-          'rounded-b-3xl'
+          'rounded-b-3xl',
+          'cursor-pointer'
         )}
         onClick={handleSendToken}
       >

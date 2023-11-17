@@ -124,7 +124,7 @@ export function XWalletProvider({ children }) {
         let ownerAddress = await getRPCProviderOwner(
           web3auth.provider
         ).getAddress();
-        updateBalance()
+        updateBalance();
         // await getETHBalance(twitterInfo?.account_address ?? '0x');
         // await getUsdtBalance(twitterInfo?.account_address ?? '0x');
         try {
@@ -300,12 +300,14 @@ export function XWalletProvider({ children }) {
     if (address === '0x') {
       return '0';
     }
-    const balance = formatEther(await publicClient.readContract({
-      address: '0x4aAeB0c6523e7aa5Adc77EAD9b031ccdEA9cB1c3',
-      abi: ERC20Abi,
-      functionName: 'balanceOf',
-      args: [address],
-    }));
+    const balance = formatEther(
+      await publicClient.readContract({
+        address: '0x4aAeB0c6523e7aa5Adc77EAD9b031ccdEA9cB1c3',
+        abi: ERC20Abi,
+        functionName: 'balanceOf',
+        args: [address],
+      })
+    );
     // setUsdtBalance(balance);
     return balance;
   };

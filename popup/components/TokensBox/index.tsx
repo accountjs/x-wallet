@@ -2,6 +2,7 @@ import cn from 'classnames';
 import { useState, useContext, useEffect } from 'react';
 import { useConfigStore } from '~popup/store';
 import { XWalletProviderContext } from '~popup/context';
+import { useNavigate } from 'react-router-dom';
 
 interface TokenItem {
   token: string;
@@ -9,13 +10,15 @@ interface TokenItem {
 }
 
 function TokensBox() {
-  const { userInfo, ethBalance, usdtBalance, updateBalance } = useContext(XWalletProviderContext);
+  const { userInfo, ethBalance, usdtBalance, updateBalance } = useContext(
+    XWalletProviderContext
+  );
   const [tokensList, setTokenList] = useState<TokenItem[]>([
     { token: 'MATIC', amount: '0.0' },
     { token: 'USDT', amount: '0.0' },
   ]);
   const { isShowMoney } = useConfigStore();
-
+  const navigate = useNavigate();
   useEffect(() => {
     console.log('ethBalance', ethBalance, 'usdtBalance', usdtBalance);
     setTokenList([
@@ -51,6 +54,10 @@ function TokensBox() {
               'flex justify-between items-center',
               'h-10 w-[320px] px-6 py-2 mb-3 rounded-2xl bg-white'
             )}
+            onClick={() => {
+              console.log('i.token', i.token);
+              navigate(`/send?token=${i.token}`);
+            }}
           >
             <span>{i.token}</span>
             <span>{isShowMoney ? <span>{i.amount}</span> : '***'}</span>

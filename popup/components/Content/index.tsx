@@ -1,13 +1,13 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
-import cn from "classnames";
-import { useState } from "react";
-import TokensBox from "../TokensBox";
-import NFTsBox from "../NFTsBox";
-import HistoryBox from "../HistoryBox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
+import cn from 'classnames';
+import { useState } from 'react';
+import TokensBox from '../TokensBox';
+import NFTsBox from '../NFTsBox';
+import HistoryBox from '../HistoryBox';
 
-const TabsArr = ["Tokens", "NFTs", "History"];
+const TabsArr = ['Tokens', 'NFTs', 'History'];
 export default function Content() {
-  const [tabActive, setTabActive] = useState("Tokens");
+  const [tabActive, setTabActive] = useState('Tokens');
 
   return (
     <Tabs defaultValue={tabActive} className="min-h-[170px]">
@@ -16,13 +16,13 @@ export default function Content() {
           <TabsTrigger
             key={i}
             className={cn(
-              "rounded-t-3xl w-[100%] h-11 leading-[44px] text-base font-semibold",
+              'rounded-t-3xl w-[100%] h-11 leading-[44px] text-base font-semibold',
               {
-                "bg-[#E9E9E9]": tabActive === i,
-                "text-[#000000]": tabActive === i,
-                "bg-[#ECECEC]": tabActive !== i,
-                "opacity-50": tabActive !== i,
-                "text-[#BFBFBF]": tabActive !== i,
+                'bg-[#E9E9E9]': tabActive === i,
+                'text-[#000000]': tabActive === i,
+                'bg-[#ECECEC]': tabActive !== i,
+                'opacity-50': tabActive !== i,
+                'text-[#BFBFBF]': tabActive !== i,
               }
             )}
             value={i}
