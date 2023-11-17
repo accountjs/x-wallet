@@ -26,7 +26,7 @@ function HistoryBox() {
   }, []);
 
   return (
-    <div className="bg-[#E9E9E9] text-center px-5 py-4 h-[170px] relative rounded-b-2xl">
+    <div className="bg-[#E9E9E9] text-center px-5 py-4 h-[170px] relative rounded-b-2xl overflow-x-hidden overflow-y-scroll ">
       { !txRecords || txRecords.length === 0 ? (
         <div
           className={cn(
@@ -39,7 +39,7 @@ function HistoryBox() {
           X-wallet support
         </div>
       ) : (
-        <div>
+        <div className='overflow-hidden'>
           {txRecords.map((item) => (
             <>
               <div className={cn('text-left text-[#979797] mb-3')}>

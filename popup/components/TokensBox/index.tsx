@@ -33,7 +33,7 @@ function TokensBox() {
   }, [userInfo]);
 
   return (
-    <div className="bg-[#E9E9E9] text-center px-5 py-4 h-[170px] relative rounded-b-2xl">
+    <div className="bg-[#E9E9E9] text-center px-5 py-4 h-[170px] relative rounded-b-2xl overflow-x-hidden overflow-y-scroll">
       {tokensList.length === 0 ? (
         <div
           className={cn(
@@ -51,7 +51,7 @@ function TokensBox() {
             key={i.token}
             className={cn(
               'text-sm font-semibold cursor-pointer',
-              'flex justify-between items-center',
+              'flex justify-between items-center overflow-hidden',
               'h-10 w-[320px] px-6 py-2 mb-3 rounded-2xl bg-white'
             )}
             onClick={() => {
