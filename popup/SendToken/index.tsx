@@ -12,8 +12,14 @@ function SendToken(props: {}) {
     navigate(-1);
   }, []);
   const [searchParams] = useSearchParams();
-  const { ethBalance, usdtBalance, getXWalletAddress, appendRecord } =
-    useContext(XWalletProviderContext);
+  const {
+    ethBalance,
+    usdtBalance,
+    getXWalletAddress,
+    appendRecord,
+    sendETH,
+    sendERC20,
+  } = useContext(XWalletProviderContext);
 
   const [balance, setBalance] = useState(ethBalance);
   const [amount, setAmount] = useState('');
@@ -56,7 +62,7 @@ function SendToken(props: {}) {
     changeBalance(currency);
   };
 
-  const handleSendToken = () => {
+  const handleSendToken = async () => {
     console.log(
       'Send',
       selectedCurrency,
@@ -65,6 +71,14 @@ function SendToken(props: {}) {
       'To',
       targetAddress
     );
+    if ('matic' == selectedCurrency) await sendETH(targetAddress, amount);
+    else
+      await sendERC20(
+        '0x4aAeB0c6523e7aa5Adc77EAD9b031ccdEA9cB1c3',
+        targetAddress,
+        amount,
+        18
+      );
     appendRecord({
       timestamp: new Date().toString(),
       toTwitter: targetHandle,
@@ -79,18 +93,23 @@ function SendToken(props: {}) {
   const handleTwitterBlur = async () => {
     const twitterUsername = twitterRef.current?.value;
     console.log('Twitter Username', twitterUsername);
+    if (/^0x[0-9a-fA-F]{40}$/.test(twitterUsername)) {
+      setTargetHandle(twitterUsername);
+      setTargetAddress(twitterUsername);
+    } else {
+      if (twitterUsername) {
+        // 调用后台接口获取目标地址
 
-    if (twitterUsername) {
-      // 调用后台接口获取目标地址
-      const data = await getXWalletAddress(twitterUsername);
-      console.log('Target Address', data.account_address);
-      setTargetAddress(data.account_address);
+        const data = await getXWalletAddress(twitterUsername);
+        console.log('Target Address', data.account_address);
+        setTargetAddress(data.account_address);
 
-      let handle = twitterUsername; // if address, shorten
-      if (handle.startsWith('0x') && handle.length > 16) {
-        handle = addressFormat(handle);
+        let handle = twitterUsername; // if address, shorten
+        if (handle.startsWith('0x') && handle.length > 16) {
+          handle = addressFormat(handle);
+        }
+        setTargetHandle(handle);
       }
-      setTargetHandle(handle);
     }
   };
 

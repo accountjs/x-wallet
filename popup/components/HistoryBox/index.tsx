@@ -27,7 +27,7 @@ function HistoryBox() {
 
   return (
     <div className="bg-[#E9E9E9] text-center px-5 py-4 h-[170px] relative rounded-b-2xl overflow-x-hidden overflow-y-scroll ">
-      { !txRecords || txRecords.length === 0 ? (
+      {!txRecords || txRecords.length === 0 ? (
         <div
           className={cn(
             'absolute bottom-2 left-4',
@@ -39,7 +39,7 @@ function HistoryBox() {
           X-wallet support
         </div>
       ) : (
-        <div className='overflow-hidden'>
+        <div className="overflow-hidden">
           {txRecords.map((item) => (
             <>
               <div className={cn('text-left text-[#979797] mb-3')}>
@@ -52,11 +52,7 @@ function HistoryBox() {
                   'flex justify-between items-center',
                   'h-10 w-[100%] px-6 py-2 mb-3 rounded-2xl bg-white'
                 )}
-                onClick={(i) =>
-                  toTransactionDetail(
-                    '0x9628815ffa0a91bb4ee0e5b5dc25b84c1c0ebd1d1b76975fb6961397f8bac1f3'
-                  )
-                }
+                onClick={(i) => toTransactionDetail(item.hash)}
               >
                 <span>{item.toTwitter}</span>
                 <span
@@ -65,10 +61,8 @@ function HistoryBox() {
                     'text-[#B82929]': !item.amount,
                   })}
                 >
-                  {item.amount ? 
-                    isShowMoney ? item.amount : '*** ' 
-                    : ' '} 
-                  {item.currency.toUpperCase()}           
+                  {item.amount ? (isShowMoney ? item.amount : '*** ') : ' '}
+                  {item.currency.toUpperCase()}
                 </span>
               </div>
             </>

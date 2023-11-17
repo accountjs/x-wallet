@@ -78,3 +78,7 @@
 div, p, h1, h2, h3, ul, li {
   box-sizing: border-box;
 }
+
+#plasmo-shadow-container {
+  z-index: 1 !important;
+}
