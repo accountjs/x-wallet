@@ -1,4 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~components/ui/tabs';
 export default function Footer() {
   return (
     <Tabs defaultValue="account" className="w-[400px]">

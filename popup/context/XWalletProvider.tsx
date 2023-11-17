@@ -81,7 +81,7 @@ export function XWalletProvider({ children }) {
         const web3auth = new Web3AuthNoModal({
           clientId:
             'BIwT5GCxEqEm6Nm6_DtLcl3IMdR2SmqJJNUYhBX2v3J_vCIlyBCjokH5vD_95_-5iKDKygC-li7pCoh1coRTTi8',
-          web3AuthNetwork: 'sapphire_mainnet',
+          web3AuthNetwork: 'sapphire_devnet',
           // @ts-ignore
           chainConfig,
         });
@@ -124,7 +124,7 @@ export function XWalletProvider({ children }) {
         let ownerAddress = await getRPCProviderOwner(
           web3auth.provider
         ).getAddress();
-        updateBalance()
+        updateBalance();
         // await getETHBalance(twitterInfo?.account_address ?? '0x');
         // await getUsdtBalance(twitterInfo?.account_address ?? '0x');
         try {
@@ -205,14 +205,7 @@ export function XWalletProvider({ children }) {
           args: [toAddress, parseEther(value)],
         }),
       });
-      console.log(
-        'Send to',
-        toAddress,
-        'Value',
-        value,
-        'hash',
-        hash
-      );
+      console.log('Send to', toAddress, 'Value', value, 'hash', hash);
       return hash;
     },
     [ecdsaProvider]
@@ -300,12 +293,14 @@ export function XWalletProvider({ children }) {
     if (address === '0x') {
       return '0';
     }
-    const balance = formatEther(await publicClient.readContract({
-      address: '0x4aAeB0c6523e7aa5Adc77EAD9b031ccdEA9cB1c3',
-      abi: ERC20Abi,
-      functionName: 'balanceOf',
-      args: [address],
-    }));
+    const balance = formatEther(
+      await publicClient.readContract({
+        address: '0x4aAeB0c6523e7aa5Adc77EAD9b031ccdEA9cB1c3',
+        abi: ERC20Abi,
+        functionName: 'balanceOf',
+        args: [address],
+      })
+    );
     // setUsdtBalance(balance);
     return balance;
   };

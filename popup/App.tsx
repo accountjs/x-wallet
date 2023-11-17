@@ -31,7 +31,7 @@ export default function App() {
           element={
             <>
               <PrivateRoute>
-                <SendToken token="matic" />
+                <SendToken />
               </PrivateRoute>
             </>
           }

@@ -25,7 +25,7 @@ export default function Header() {
   }, []);
 
   const handleToSend = useCallback(() => {
-    navigate('/send');
+    navigate('/send?token=matic');
   }, []);
 
   return (
@@ -37,8 +37,8 @@ export default function Header() {
             onClick={handleToSend}
             className={cn(
               'w-20 h-8 mr-4',
-              'bg-[#0F141A] border-[#0F141A] rounded-2xl',
-              'flex justify-center items-center text-white'
+              'bg-[#0F141A] border-[#0F141A] rounded-2xl hover:bg-[#67696c]',
+              'flex justify-center items-center text-white hover:text-black'
             )}
           >
             Send

@@ -1,4 +1,4 @@
-import cssText from "data-text:~globals.css";
+import cssText from 'data-text:~globals.css';
 import type {
   PlasmoCSConfig,
   PlasmoCSUIJSXContainer,
@@ -8,16 +8,16 @@ import type {
   PlasmoGetShadowHostId,
   PlasmoGetStyle,
   PlasmoRender,
-} from "plasmo";
+} from 'plasmo';
 
-import Popup from "~popup";
-import styleText from "data-text:../globals.css";
+import Popup from '~popup';
+import styleText from 'data-text:../globals.css';
 export const config: PlasmoCSConfig = {
-  matches: ["https://twitter.com/*"],
+  matches: ['https://twitter.com/*'],
   // matches: ["https://www.baidu.com/*"],
 };
 export const getStyle: PlasmoGetStyle = () => {
-  const style = document.createElement("style");
+  const style = document.createElement('style');
   style.textContent = styleText;
   return style;
 };
