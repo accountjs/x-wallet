@@ -81,7 +81,7 @@ export function XWalletProvider({ children }) {
         const web3auth = new Web3AuthNoModal({
           clientId:
             'BIwT5GCxEqEm6Nm6_DtLcl3IMdR2SmqJJNUYhBX2v3J_vCIlyBCjokH5vD_95_-5iKDKygC-li7pCoh1coRTTi8',
-          web3AuthNetwork: 'sapphire_mainnet',
+          web3AuthNetwork: 'sapphire_devnet',
           // @ts-ignore
           chainConfig,
         });
@@ -205,14 +205,7 @@ export function XWalletProvider({ children }) {
           args: [toAddress, parseEther(value)],
         }),
       });
-      console.log(
-        'Send to',
-        toAddress,
-        'Value',
-        value,
-        'hash',
-        hash
-      );
+      console.log('Send to', toAddress, 'Value', value, 'hash', hash);
       return hash;
     },
     [ecdsaProvider]
