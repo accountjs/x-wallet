@@ -29,6 +29,7 @@
     "ethers": "^6.8.1",
     "hook": "link:@plasmohq/storage/hook",
     "lucide-react": "^0.292.0",
+    "moment": "^2.29.4",
     "plasmo": "0.84.0",
     "react": "18.2.0",
     "react-copy-to-clipboard": "^5.1.0",

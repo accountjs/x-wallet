@@ -327,12 +327,13 @@ export function XWalletProvider({ children }) {
   }, [userInfo, ecdsaProvider]);
 
   // 插入交易记录
-  const appendRecord = useCallback(
-    async (txRecord: TxRecord) => {
-      setTxRecords((prev) => [...prev, txRecord]);
-    },
-    [userInfo]
-  );
+  const appendRecord = (txRecord: TxRecord) => {
+    if (!txRecords) {
+      setTxRecords([txRecord]);
+    } else {
+      setTxRecords([...txRecords, txRecord])
+    }
+  }
 
   return (
     <XWalletProviderContext.Provider

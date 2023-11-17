@@ -1,22 +1,24 @@
 import cn from 'classnames';
-import { useCallback, useContext, useState } from 'react';
+import moment from 'moment';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { XWalletProviderContext } from '~popup/context';
 import { useConfigStore } from '~popup/store';
 
-interface HistoryItem {
-  token: string;
-  amount: string;
-}
+// interface HistoryItem {
+//   token: string;
+//   amount: string;
+// }
 
-interface TimeItem {
-  time: string;
-  history: HistoryItem[];
-}
+// interface TimeItem {
+//   time: string;
+//   history: HistoryItem[];
+// }
 
 function HistoryBox() {
   const { txRecords } = useContext(XWalletProviderContext);
   const { isShowMoney } = useConfigStore();
+
   const navigate = useNavigate();
 
   const toTransactionDetail = useCallback((hash: `0x${string}`) => {
@@ -25,7 +27,7 @@ function HistoryBox() {
 
   return (
     <div className="bg-[#E9E9E9] text-center px-5 py-4 h-[170px] relative rounded-b-2xl">
-      {txRecords.length === 0 ? (
+      { !txRecords || txRecords.length === 0 ? (
         <div
           className={cn(
             'absolute bottom-2 left-4',
@@ -41,7 +43,7 @@ function HistoryBox() {
           {txRecords.map((item) => (
             <>
               <div className={cn('text-left text-[#979797] mb-3')}>
-                {item.timestamp}
+                {moment(item.timestamp).format('YYYY-MM-DD HH:mm:ss')}
               </div>
               <div
                 key={item.hash}
@@ -63,8 +65,10 @@ function HistoryBox() {
                     'text-[#B82929]': !item.amount,
                   })}
                 >
-                  {item.amount ? (isShowMoney ? item.amount : '*** ') : ' '}
-                  {item.currency}
+                  {item.amount ? 
+                    isShowMoney ? item.amount : '*** ' 
+                    : ' '} 
+                  {item.currency.toUpperCase()}           
                 </span>
               </div>
             </>
