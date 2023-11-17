@@ -26,5 +26,10 @@ export const getInlineAnchor: PlasmoGetInlineAnchor = async () =>
     "div[data-testid='sidebarColumn'] > div > div:nth-child(2) > div > div > div > div:nth-child(2)"
   );
 // document.querySelector("div[id='lg']");
+// export const getRootContainer = () => {
+//   let div = document.createElement('div');
+//   div.classList.add('fffff');
+//   return div;
+// };
 
 export default Popup;

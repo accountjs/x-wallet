@@ -42,7 +42,7 @@ export interface UserInfo {
 }
 
 export interface TxRecord {
-  timestamp: string,
+  timestamp: string;
   toTwitter: string;
   toAddress: `0x${string}`;
   amount: string;
@@ -68,7 +68,7 @@ export function XWalletProvider({ children }) {
   const [usdtBalance, setUsdtBalance] = useState('0');
   const [loginLoading, setLoginLoading] = useState(false);
   const [userInfo, setUserInfo] = useStorage<UserInfo>('user-info');
-  const [txRecords, setTxRecords] = useStorage<TxRecord[]>('tx-history');
+  const [txRecords, setTxRecords] = useStorage<TxRecord[]>('tx-history', []);
   const [ecdsaProvider, setEcdsaProvider] = useState<ECDSAProvider | null>(
     null
   );
@@ -192,24 +192,27 @@ export function XWalletProvider({ children }) {
   );
 
   const sendETH = useCallback(
-    async (target, value) => {
-      // check target
-      let toAddress = await checkTarget(target);
+    async (toAddress: `0x${string}`, value: string) => {
       const { hash } = await ecdsaProvider.sendUserOperation({
         target: toAddress,
         data: '0x',
         value: parseEther(value),
       });
       console.log('Send to', toAddress, 'ETH', value, 'hash', hash);
+      await ecdsaProvider.waitForUserOperationTransaction(
+        hash as `0x${string}`
+      );
       return hash;
     },
     [ecdsaProvider]
   );
 
   const sendERC20 = useCallback(
-    async (tokenAddress, target, value) => {
-      // check target
-      let toAddress = await checkTarget(target);
+    async (
+      tokenAddress: `0x${string}`,
+      toAddress: `0x${string}`,
+      value: string
+    ) => {
       const { hash } = await ecdsaProvider.sendUserOperation({
         target: tokenAddress,
         data: encodeFunctionData({
@@ -218,6 +221,10 @@ export function XWalletProvider({ children }) {
           args: [toAddress, parseEther(value)],
         }),
       });
+      console.log('Send to', toAddress, 'ETH', value, 'hash', hash);
+      await ecdsaProvider.waitForUserOperationTransaction(
+        hash as `0x${string}`
+      );
       console.log('Send to', toAddress, 'Value', value, 'hash', hash);
       return hash;
     },
@@ -331,9 +338,9 @@ export function XWalletProvider({ children }) {
     if (!txRecords) {
       setTxRecords([txRecord]);
     } else {
-      setTxRecords([...txRecords, txRecord])
+      setTxRecords([...txRecords, txRecord]);
     }
-  }
+  };
 
   return (
     <XWalletProviderContext.Provider
