@@ -1,6 +1,7 @@
 import cn from 'classnames';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { XWalletProviderContext } from '~popup/context';
 import { useConfigStore } from '~popup/store';
 
 interface HistoryItem {
@@ -14,19 +15,20 @@ interface TimeItem {
 }
 
 function HistoryBox() {
-  const [historyList, setHistoryList] = useState<TimeItem[]>([
-    { time: 'Nov 3, 2023', history: [{ token: 'ETH', amount: '11' }] },
-  ]);
+  const { txRecords } = useContext(
+    XWalletProviderContext
+  );
   const { isShowMoney } = useConfigStore();
   const navigate = useNavigate();
 
   const toTransactionDetail = useCallback(() => {
-    navigate('/transactionDetail');
+    //navigate('/transactionDetail');
+    // to explorer
   }, []);
 
   return (
     <div className="bg-[#E9E9E9] text-center px-5 py-4 h-[170px] relative rounded-b-2xl">
-      {historyList.length === 0 ? (
+      {txRecords.length === 0 ? (
         <div
           className={cn(
             'absolute bottom-2 left-4',
@@ -39,14 +41,13 @@ function HistoryBox() {
         </div>
       ) : (
         <div>
-          {historyList.map((item) => (
+          {txRecords.map((item) => (
             <>
               <div className={cn('text-left text-[#979797] mb-3')}>
-                {item.time}
+                {item.timestamp}
               </div>
-              {item.history.map((i) => (
                 <div
-                  key={i.token}
+                  key={item.hash}
                   className={cn(
                     'text-sm font-semibold cursor-pointer',
                     'flex justify-between items-center',
@@ -54,17 +55,19 @@ function HistoryBox() {
                   )}
                   onClick={(i) => toTransactionDetail()}
                 >
-                  <span>{i.token}</span>
+                  <span>{item.toTwitter}</span>
                   <span
                     className={cn({
-                      'text-[#4CBC17]': !!i.amount,
-                      'text-[#B82929]': !i.amount,
+                      'text-[#4CBC17]': !!item.amount,
+                      'text-[#B82929]': !item.amount,
                     })}
                   >
-                    {isShowMoney ? i.amount : '***'}
+                    {item.amount ? 
+                      isShowMoney ? item.amount : '*** ' 
+                      : ' '} 
+                    {item.currency}           
                   </span>
                 </div>
-              ))}
             </>
           ))}
         </div>

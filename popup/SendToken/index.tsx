@@ -67,6 +67,7 @@ function SendToken(props: {}) {
       targetAddress
     );
     appendRecord({
+      timestamp: new Date().toString(),
       toTwitter: targetHandle,
       toAddress: targetAddress,
       amount,
@@ -85,7 +86,12 @@ function SendToken(props: {}) {
       const data = await getXWalletAddress(twitterUsername);
       console.log('Target Address', data.account_address);
       setTargetAddress(data.account_address)
-      setTargetHandle(twitterUsername)
+      
+      let handle = twitterUsername; // if address, shorten
+      if (handle.startsWith('0x') && handle.length > 16) {
+        handle = addressFormat(handle)
+      }
+      setTargetHandle(handle)
     }
   };
 

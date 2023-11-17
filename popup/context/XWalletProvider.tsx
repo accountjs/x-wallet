@@ -42,6 +42,7 @@ export interface UserInfo {
 }
 
 export interface TxRecord {
+  timestamp: string,
   toTwitter: string;
   toAddress: `0x${string}`;
   amount: string;
@@ -303,13 +304,15 @@ export function XWalletProvider({ children }) {
     return balance;
   };
 
+  // 更新余额
   const updateBalance = useCallback(async () => {
     const ethBalance = await getETHBalance(userInfo.accountAddress);
     const usdtBalance = await getUsdtBalance(userInfo.accountAddress);
     setEthBalance(ethBalance);
     setUsdtBalance(usdtBalance);
-  }, [userInfo]);
+  }, [userInfo, ecdsaProvider]);
 
+  // 插入交易记录
   const appendRecord = useCallback(
     async (txRecord: TxRecord) => {
       const txs = [...txRecords, txRecord];
