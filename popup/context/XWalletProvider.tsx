@@ -13,6 +13,7 @@ import {
   http,
   parseAbi,
   parseEther,
+  parseUnits,
 } from 'viem';
 import { polygonMumbai } from 'viem/chains';
 import { NFT_Contract_Abi } from '~contractAbi.js';
@@ -211,14 +212,15 @@ export function XWalletProvider({ children }) {
     async (
       tokenAddress: `0x${string}`,
       toAddress: `0x${string}`,
-      value: string
+      value: string,
+      dec: number
     ) => {
       const { hash } = await ecdsaProvider.sendUserOperation({
         target: tokenAddress,
         data: encodeFunctionData({
-          abi: TRANSFER_FUNC_ABI,
+          abi: ERC20Abi,
           functionName: 'transfer',
-          args: [toAddress, parseEther(value)],
+          args: [toAddress, parseUnits(value, dec)],
         }),
       });
       console.log('Send to', toAddress, 'ETH', value, 'hash', hash);

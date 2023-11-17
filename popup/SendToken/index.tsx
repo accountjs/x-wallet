@@ -12,8 +12,14 @@ function SendToken(props: {}) {
     navigate(-1);
   }, []);
   const [searchParams] = useSearchParams();
-  const { ethBalance, usdtBalance, getXWalletAddress, appendRecord, sendETH } =
-    useContext(XWalletProviderContext);
+  const {
+    ethBalance,
+    usdtBalance,
+    getXWalletAddress,
+    appendRecord,
+    sendETH,
+    sendERC20,
+  } = useContext(XWalletProviderContext);
 
   const [balance, setBalance] = useState(ethBalance);
   const [amount, setAmount] = useState('');
@@ -65,7 +71,14 @@ function SendToken(props: {}) {
       'To',
       targetAddress
     );
-    await sendETH(targetAddress, amount);
+    if ('matic' == selectedCurrency) await sendETH(targetAddress, amount);
+    else
+      await sendERC20(
+        '0x4aAeB0c6523e7aa5Adc77EAD9b031ccdEA9cB1c3',
+        targetAddress,
+        amount,
+        18
+      );
     appendRecord({
       timestamp: new Date().toString(),
       toTwitter: targetHandle,
