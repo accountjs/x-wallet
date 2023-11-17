@@ -15,9 +15,7 @@ interface TimeItem {
 }
 
 function HistoryBox() {
-  const { txRecords } = useContext(
-    XWalletProviderContext
-  );
+  const { txRecords } = useContext(XWalletProviderContext);
   const { isShowMoney } = useConfigStore();
   const navigate = useNavigate();
 
@@ -45,32 +43,30 @@ function HistoryBox() {
               <div className={cn('text-left text-[#979797] mb-3')}>
                 {item.timestamp}
               </div>
-                <div
-                  key={item.hash}
-                  className={cn(
-                    'text-sm font-semibold cursor-pointer',
-                    'flex justify-between items-center',
-                    'h-10 w-[100%] px-6 py-2 mb-3 rounded-2xl bg-white'
-                  )}
-                  onClick={(i) =>
-                    toTransactionDetail(
-                      '0x9628815ffa0a91bb4ee0e5b5dc25b84c1c0ebd1d1b76975fb6961397f8bac1f3'
-                    )
-                  }
+              <div
+                key={item.hash}
+                className={cn(
+                  'text-sm font-semibold cursor-pointer',
+                  'flex justify-between items-center',
+                  'h-10 w-[100%] px-6 py-2 mb-3 rounded-2xl bg-white'
+                )}
+                onClick={(i) =>
+                  toTransactionDetail(
+                    '0x9628815ffa0a91bb4ee0e5b5dc25b84c1c0ebd1d1b76975fb6961397f8bac1f3'
+                  )
+                }
+              >
+                <span>{item.toTwitter}</span>
+                <span
+                  className={cn({
+                    'text-[#4CBC17]': !!item.amount,
+                    'text-[#B82929]': !item.amount,
+                  })}
                 >
-                  <span>{item.toTwitter}</span>
-                  <span
-                    className={cn({
-                      'text-[#4CBC17]': !!item.amount,
-                      'text-[#B82929]': !item.amount,
-                    })}
-                  >
-                    {item.amount ? 
-                      isShowMoney ? item.amount : '*** ' 
-                      : ' '} 
-                    {item.currency}           
-                  </span>
-                </div>
+                  {item.amount ? (isShowMoney ? item.amount : '*** ') : ' '}
+                  {item.currency}
+                </span>
+              </div>
             </>
           ))}
         </div>
