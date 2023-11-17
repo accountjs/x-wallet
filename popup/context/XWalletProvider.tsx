@@ -208,8 +208,6 @@ export function XWalletProvider({ children }) {
       console.log(
         'Send to',
         toAddress,
-        'Token',
-        tokenAddress,
         'Value',
         value,
         'hash',

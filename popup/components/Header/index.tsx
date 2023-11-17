@@ -123,7 +123,7 @@ export default function Header() {
       </div>
       <div className="text-3xl font-semibold mt-5 mb-6">
         {isShowMoney
-          ? `$ ${Number(ethBalance) * 0.9 + Number(usdtBalance)}`
+          ? `$ ${(Number(ethBalance) * 0.9 + Number(usdtBalance)).toFixed(5)}`
           : '**********'}
       </div>
     </div>
