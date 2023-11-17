@@ -315,8 +315,7 @@ export function XWalletProvider({ children }) {
   // 插入交易记录
   const appendRecord = useCallback(
     async (txRecord: TxRecord) => {
-      const txs = [...txRecords, txRecord];
-      setTxRecords(txs);
+      setTxRecords((prev) => [...prev, txRecord]);
     },
     [userInfo]
   );
