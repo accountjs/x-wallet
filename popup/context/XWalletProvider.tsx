@@ -65,6 +65,7 @@ const chainConfig = {
 
 export function XWalletProvider({ children }) {
   const [isLogin, setIsLogin] = useState(false);
+  const [isSendLogin, setIsSendLogin] = useState(false);
   const [ethBalance, setEthBalance] = useState('0');
   const [usdtBalance, setUsdtBalance] = useState('0');
   const [loginLoading, setLoginLoading] = useState(false);
@@ -194,16 +195,23 @@ export function XWalletProvider({ children }) {
 
   const sendETH = useCallback(
     async (toAddress: `0x${string}`, value: string) => {
-      const { hash } = await ecdsaProvider.sendUserOperation({
-        target: toAddress,
-        data: '0x',
-        value: parseEther(value),
-      });
-      console.log('Send to', toAddress, 'ETH', value, 'hash', hash);
-      await ecdsaProvider.waitForUserOperationTransaction(
-        hash as `0x${string}`
-      );
-      return hash;
+      setIsSendLogin(true);
+      let return_hash;
+      try {
+        const { hash } = await ecdsaProvider.sendUserOperation({
+          target: toAddress,
+          data: '0x',
+          value: parseEther(value),
+        });
+        return_hash = hash;
+        console.log('Send to', toAddress, 'ETH', value, 'hash', hash);
+        await ecdsaProvider.waitForUserOperationTransaction(
+          hash as `0x${string}`
+        );
+      } finally {
+        setIsSendLogin(false);
+      }
+      return return_hash;
     },
     [ecdsaProvider]
   );
@@ -215,20 +223,27 @@ export function XWalletProvider({ children }) {
       value: string,
       dec: number
     ) => {
-      const { hash } = await ecdsaProvider.sendUserOperation({
-        target: tokenAddress,
-        data: encodeFunctionData({
-          abi: ERC20Abi,
-          functionName: 'transfer',
-          args: [toAddress, parseUnits(value, dec)],
-        }),
-      });
-      console.log('Send to', toAddress, 'ETH', value, 'hash', hash);
-      await ecdsaProvider.waitForUserOperationTransaction(
-        hash as `0x${string}`
-      );
-      console.log('Send to', toAddress, 'Value', value, 'hash', hash);
-      return hash;
+      setIsSendLogin(true);
+      let return_hash;
+      try {
+        const { hash } = await ecdsaProvider.sendUserOperation({
+          target: tokenAddress,
+          data: encodeFunctionData({
+            abi: ERC20Abi,
+            functionName: 'transfer',
+            args: [toAddress, parseUnits(value, dec)],
+          }),
+        });
+        return_hash = hash;
+        console.log('Send to', toAddress, 'ETH', value, 'hash', hash);
+        await ecdsaProvider.waitForUserOperationTransaction(
+          hash as `0x${string}`
+        );
+        console.log('Send to', toAddress, 'Value', value, 'hash', hash);
+      } finally {
+        setIsSendLogin(false);
+      }
+      return return_hash;
     },
     [ecdsaProvider]
   );
@@ -364,6 +379,7 @@ export function XWalletProvider({ children }) {
         appendRecord,
         getTransaction,
         getUserOperationByHash,
+        isSendLogin,
       }}
     >
       {children}
