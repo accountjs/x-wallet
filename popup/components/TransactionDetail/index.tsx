@@ -1,7 +1,8 @@
 import cn from 'classnames';
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { XWalletProviderContext } from '~popup/context';
 
 function AddressCopyBox({ address = '', classnames = '' }) {
   const handleCopyAddress = useCallback(() => {
@@ -142,10 +143,25 @@ function StatusIcon({ status = 'success' }) {
 
 function TransactionDetail() {
   const navigate = useNavigate();
-
+  const [searchParams] = useSearchParams();
   const goBack = useCallback(() => {
     navigate(-1);
   }, []);
+  const { getTransaction } = useContext(XWalletProviderContext);
+  const [hash] = useState(searchParams.get('hash'));
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (hash !== '') {
+      setLoading(true);
+      getTransaction(hash)
+        .then((tx) => {
+          console.log(tx);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [hash]);
 
   return (
     <div className="p-4">

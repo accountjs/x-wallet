@@ -12,9 +12,8 @@ function SendToken(props: {}) {
     navigate(-1);
   }, []);
   const [searchParams] = useSearchParams();
-  const { ethBalance, usdtBalance, getXWalletAddress, appendRecord } = useContext(
-    XWalletProviderContext
-  );
+  const { ethBalance, usdtBalance, getXWalletAddress, appendRecord } =
+    useContext(XWalletProviderContext);
 
   const [balance, setBalance] = useState(ethBalance);
   const [amount, setAmount] = useState('');
@@ -72,8 +71,8 @@ function SendToken(props: {}) {
       toAddress: targetAddress,
       amount,
       currency: selectedCurrency,
-      hash: "0x",
-    })
+      hash: '0x',
+    });
   };
 
   const twitterRef = useRef<HTMLInputElement>(null);
@@ -85,13 +84,13 @@ function SendToken(props: {}) {
       // 调用后台接口获取目标地址
       const data = await getXWalletAddress(twitterUsername);
       console.log('Target Address', data.account_address);
-      setTargetAddress(data.account_address)
-      
+      setTargetAddress(data.account_address);
+
       let handle = twitterUsername; // if address, shorten
       if (handle.startsWith('0x') && handle.length > 16) {
-        handle = addressFormat(handle)
+        handle = addressFormat(handle);
       }
-      setTargetHandle(handle)
+      setTargetHandle(handle);
     }
   };
 
