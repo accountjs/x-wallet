@@ -1,22 +1,52 @@
 import cn from 'classnames';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import qbrady_manga from 'data-base64:~popup/assets/svg/qbrady_manga.png';
 import { useNavigate } from 'react-router-dom';
+import { XWalletProviderContext } from '~popup/context';
+import { it } from 'node:test';
 
 interface NFTItem {
-  nft: '';
+  tokenId: bigint;
+  tokenURI: string;
+  tokenName: string;
+  tokenImage: string;
 }
 
 function NFTsBox() {
-  const [tokensList, setTokenList] = useState<NFTItem[]>([
-    { nft: '' },
-    { nft: '' },
-    { nft: '' },
-  ]);
+  const [tokensList, setTokenList] = useState<NFTItem[]>([]);
+  const { mintNft, getNfts, userInfo } = useContext(XWalletProviderContext);
   const navigate = useNavigate();
 
-  const toSendNFT = useCallback(() => {
-    navigate('/sendNFT');
+  const toSendNFT = useCallback((item: NFTItem) => {
+    navigate(`/sendNFT?tokenId=${item.tokenId}&tokenImage=${item.tokenImage}`);
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      let { tokenids, tokenURIs } = await getNfts();
+      let nfts: NFTItem[] = [];
+      for (let i = 0; i < tokenURIs.length; i++) {
+        let response = await fetch(
+          (tokenURIs[i] as string).replace('ipfs://', 'https://ipfs.io/ipfs/')
+        );
+        response = await response.json();
+        // @ts-ignore
+        let imageURL = response.image;
+        nfts.push({
+          tokenId: tokenids[i] as bigint,
+          tokenURI: (tokenURIs[i] as string).replace(
+            'ipfs://',
+            'https://ipfs.io/ipfs/'
+          ),
+          tokenName: `NFT #${(tokenids[i] as bigint).toString()}`,
+          tokenImage: (imageURL as string).replace(
+            'ipfs://',
+            'https://ipfs.io/ipfs/'
+          ),
+        });
+      }
+      setTokenList(nfts);
+    })();
   }, []);
 
   return (
@@ -35,6 +65,9 @@ function NFTsBox() {
             'flex justify-center items-center',
             'h-10 w-[320px] px-6 py-2 mb-3 rounded-2xl bg-white opacity-30'
           )}
+          onClick={async () => {
+            await mintNft(userInfo?.username);
+          }}
         >
           + Import NFTs
         </div>
@@ -42,7 +75,7 @@ function NFTsBox() {
         <div className={cn('flex justify-start pr-5')}>
           {tokensList.map((i, index) => (
             <div
-              onClick={() => toSendNFT()}
+              onClick={() => toSendNFT(i)}
               key={index}
               className={cn(
                 'flex justify-start items-center flex-shrink-0 flex-col cursor-pointer',
@@ -50,7 +83,7 @@ function NFTsBox() {
               )}
             >
               <img
-                src={qbrady_manga}
+                src={i.tokenImage}
                 className="w-[105px] h-[105px] rounded-3xl"
               />
               <span className="font-semibold"> → </span>
