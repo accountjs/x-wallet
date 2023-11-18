@@ -19,6 +19,7 @@ function SendToken(props: {}) {
     appendRecord,
     sendETH,
     sendERC20,
+    isSendLogin,
   } = useContext(XWalletProviderContext);
 
   const [balance, setBalance] = useState(ethBalance);
@@ -71,6 +72,7 @@ function SendToken(props: {}) {
       'To',
       targetAddress
     );
+
     if ('matic' == selectedCurrency) await sendETH(targetAddress, amount);
     else
       await sendERC20(
@@ -87,6 +89,7 @@ function SendToken(props: {}) {
       currency: selectedCurrency,
       hash: '0x',
     });
+    goBack();
   };
 
   const twitterRef = useRef<HTMLInputElement>(null);
@@ -181,17 +184,20 @@ function SendToken(props: {}) {
         </div>
       )}
 
-      <div
+      <button
         className={cn(
           'absolute left-0 bottom-0',
           'w-[100%] h-12 text-center text-white  bg-black leading-[48px]',
           'rounded-b-3xl',
-          'cursor-pointer'
+
+          'flex justify-center items-center',
+          isSendLogin ? 'bg-gray-500' : 'bg-black'
         )}
+        disabled={isSendLogin}
         onClick={handleSendToken}
       >
-        Send
-      </div>
+        {isSendLogin ? 'Loading...' : 'Send'}
+      </button>
     </div>
   );
 }
