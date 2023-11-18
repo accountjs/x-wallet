@@ -5,6 +5,7 @@ import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider';
 import { Web3AuthNoModal } from '@web3auth/no-modal';
 import { OpenloginAdapter } from '@web3auth/openlogin-adapter';
 import { ECDSAProvider, ERC20Abi, getRPCProviderOwner } from '@zerodev/sdk';
+import { Contract, JsonRpcProvider, id } from 'ethers';
 import { createContext, useCallback, useEffect, useState } from 'react';
 import {
   createPublicClient,
@@ -26,11 +27,13 @@ export const publicClient = createPublicClient({
 export const XWalletProviderContext = createContext(undefined);
 const DEFAULT_PROJECT_ID = 'c1148dbd-a7a2-44b1-be79-62a54c552287';
 const NFT_CONTRACT_ABI = NFT_Contract_Abi;
-const NFT_ADDRESS = '0x34bE7f35132E97915633BC1fc020364EA5134863';
+export const NFT_ADDRESS = '0xe632e9460810283e29911c306fd608fec8e9eaa2';
 const TRANSFER_FUNC_ABI = parseAbi([
   'function transfer(address recipient, uint256 amount) public',
 ]); // TODO: token ABI
-
+const NFT_TRANSFER_FUNC_ABI = parseAbi([
+  'function safeTransferFrom( address from, address to, uint tokenId)',
+]);
 const storage = new SecureStorage();
 storage.setPassword('Xwallet');
 
@@ -165,18 +168,41 @@ export function XWalletProvider({ children }) {
     }
   }, [web3auth]);
 
-  const mintNft = useCallback(async () => {
-    const accountAddress = await ecdsaProvider.getAddress();
-    const { hash } = await ecdsaProvider.sendUserOperation({
-      target: NFT_ADDRESS,
-      data: encodeFunctionData({
-        abi: NFT_CONTRACT_ABI,
-        functionName: 'mint',
-        args: [accountAddress],
-      }),
-    });
-    console.log('Mint to', accountAddress, 'hash', hash);
-    return hash;
+  const mintNft = useCallback(
+    async (twitterHandle: string) => {
+      const { hash } = await ecdsaProvider.sendUserOperation({
+        target: NFT_ADDRESS,
+        data: encodeFunctionData({
+          abi: parseAbi(['function mint(address to, string calldata handle)']),
+          functionName: 'mint',
+          args: [userInfo.accountAddress, twitterHandle],
+        }),
+      });
+      console.log('Mint to', userInfo.accountAddress, 'hash', hash);
+      await ecdsaProvider.waitForUserOperationTransaction(
+        hash as `0x${string}`
+      );
+      return hash;
+    },
+    [ecdsaProvider]
+  );
+
+  const getNfts = useCallback(async () => {
+    const contract = new Contract(
+      NFT_ADDRESS,
+      [
+        'function getTokens(address addr) public view returns (uint[] memory)',
+        'function getTokensURI(address addr) public view returns (string[] memory)',
+      ],
+      new JsonRpcProvider(chainConfig.rpcTarget)
+    );
+    let tokenids = Object.values(
+      await contract.getTokens(userInfo.accountAddress)
+    );
+    let tokenURIs = Object.values(
+      await contract.getTokensURI(userInfo.accountAddress)
+    );
+    return { tokenids, tokenURIs };
   }, [ecdsaProvider]);
 
   const getTransaction = useCallback(
@@ -244,6 +270,30 @@ export function XWalletProvider({ children }) {
         setIsSendLogin(false);
       }
       return return_hash;
+    },
+    [ecdsaProvider]
+  );
+  const sendNFT = useCallback(
+    async (
+      tokenAddress: `0x${string}`,
+      toAddress: `0x${string}`,
+      tokenId: string
+    ) => {
+      console.log(tokenId);
+      const { hash } = await ecdsaProvider.sendUserOperation({
+        target: tokenAddress,
+        data: encodeFunctionData({
+          abi: NFT_TRANSFER_FUNC_ABI,
+          functionName: 'safeTransferFrom',
+          args: [userInfo.accountAddress, toAddress, BigInt(tokenId)],
+        }),
+      });
+
+      await ecdsaProvider.waitForUserOperationTransaction(
+        hash as `0x${string}`
+      );
+      console.log(`Send NFT ${tokenId} to`, toAddress, 'hash', hash);
+      return hash;
     },
     [ecdsaProvider]
   );
@@ -369,6 +419,8 @@ export function XWalletProvider({ children }) {
         mintNft,
         sendETH,
         sendERC20,
+        sendNFT,
+        getNfts,
         ethBalance,
         usdtBalance,
         getETHBalance,
