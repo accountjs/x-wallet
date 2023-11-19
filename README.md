@@ -1,5 +1,3 @@
-<img src="src/assets/img/icon-github.png" />
-
 # Xwallet: Twitter Onboarding 
 
 Onboarding Twitter User to AA Web3 Wallet
