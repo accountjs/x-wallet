@@ -4,6 +4,7 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { XWalletProviderContext } from '~popup/context';
 import { useConfigStore } from '~popup/store';
+import { addressFormat } from '~popup/utils';
 
 // interface HistoryItem {
 //   token: string;
@@ -54,7 +55,11 @@ function HistoryBox() {
                 )}
                 onClick={(i) => toTransactionDetail(item.hash)}
               >
-                <span>{item.toTwitter}</span>
+                <span>
+                  {item.toTwitter.length > 16
+                    ? addressFormat(item.toTwitter)
+                    : item.toTwitter}
+                </span>
                 <span
                   className={cn({
                     'text-[#4CBC17]': !!item.amount,

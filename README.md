@@ -9,7 +9,7 @@ Onboarding Twitter User to AA Web3 Wallet
 This is a basic version of x wallet.
 
 - Supported by Zerodev  
-- For ETHhangzhou only
+- For ETHGlobal only
 - Mubai Testnet only
 
 ## Features
